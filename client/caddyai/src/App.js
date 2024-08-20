@@ -37,22 +37,29 @@ function App() {
   //   }
   // }
 
+  const MY_API_KEY = 'AIzaSyAZdtwG56ao9TXP_xxjAD2c4IkHx6AhQOs'
+  const { GoogleGenerativeAI } = require("@google/generative-ai");
+  // Access your API key as an environment variable (see "Set up your API key" above)
+  const genAI = new GoogleGenerativeAI(MY_API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  async function sendTestPrompt() {
+    const prompt = "What is a golf caddie and what is his job scope. How much difference does a good caddie make?"
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const reply = response.text();
+    console.log(reply);
+  }
+
+
+
   const getMessages = async () => {
-    const options = {
-      method: "POST",
-      body: JSON.stringify({
-        message: "hello how are you?"
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
+
     try {
-      const response = await fetch('http://localhost:8000/completions', options);
-      const data = await response.json();
-      console.log(data);
+      await sendTestPrompt()
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error sending/fetching messages with API:", error);
     }
   };
 
@@ -68,7 +75,7 @@ function App() {
             <li>
               example link
             </li>
-            </ul>
+          </ul>
           <nav>
             <p>Made by Yong Rui</p>
           </nav>
@@ -77,11 +84,11 @@ function App() {
 
 
 
-    {/* ////////////////top links//////////////////// */}
+      {/* ////////////////top links//////////////////// */}
 
-    <div className='content-topbar'>
+      <div className='content-topbar'>
 
-      
+
         <Navbar bg="dark" variant="dark" expand="lg" className="top-navbar-custom">
           <Container>
             <Navbar.Brand href="#">CaddyAi</Navbar.Brand>
@@ -107,49 +114,49 @@ function App() {
         </Navbar>
       </div>
 
-   {/* ////////////////chat section//////////////////// */}
-   <div className='content-body'>
-   <section className='main'>
-      <div >
-
-        <h1> CaddyGPT </h1>
-        <ul className='feed'>
-
-        </ul>
-
-        <div className='bottom-section'>
-          <div className='input-container'>
-          <input/>
-          
-          
-          <div id='submit' onClick={getMessages}> Go ⏎ </div>
-          </div>
-          <p className='info'>
-            CaddyGPT is your personal golf caddy to help you shoot lower scores!
-          </p>
-        </div>
-        
-
-
-    {/* ////////////////bottom section for future dev//////////////////// */}
-
-
-
-        
+      {/* ////////////////chat section//////////////////// */}
+      <div className='content-body'>
+        <section className='main'>
           <div >
-            {listOfPosts.map((post) => (
-              <div className='post' key={post.id}>
-                <div>
-                  <div className='title'>{post.title}</div>
-                  <div className='body'>{post.postText}</div>
-                  <div className='footer'>{post.username}</div>
-                </div>
+
+            <h1> CaddyGPT </h1>
+            <ul className='feed'>
+
+            </ul>
+
+            <div className='bottom-section'>
+              <div className='input-container'>
+                <input />
+
+
+                <div id='submit' onClick={getMessages}> Go ⏎ </div>
               </div>
-            ))}
+              <p className='info'>
+                CaddyGPT is your personal golf caddy to help you shoot lower scores!
+              </p>
+            </div>
+
+
+
+            {/* ////////////////bottom section for future dev//////////////////// */}
+
+
+
+
+            <div >
+              {listOfPosts.map((post) => (
+                <div className='post' key={post.id}>
+                  <div>
+                    <div className='title'>{post.title}</div>
+                    <div className='body'>{post.postText}</div>
+                    <div className='footer'>{post.username}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
     </div>
   );
 }
