@@ -1,15 +1,14 @@
 * {
-    color: #fff; /* Text color for all elements */
-    font-family: Georgia, 'Times New Roman', Times, serif; /* Global font family */
+    color: #fff;
+    /* Text color for all elements */
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    /* Global font family */
 }
-
-
 
 .app {
-    display: flex; /* Flexbox layout for app */
-    height: 100vh; /* Full viewport height */
-
+    display: flex;
+    /* Flexbox layout for app */
+    height: 100vh;
+    /* Full viewport height */
+    overflow: hidden;
 }
-
-
-

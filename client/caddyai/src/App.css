@@ -1,126 +1,111 @@
-.top-navbar-custom {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 50px;
-}
-
-.profile-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-}
-
-.main {
-  margin-left:344 px;
-  height: 100vh; /* Full viewport height */
-  flex: 1; /* Allows the main content to take up the remaining space */
+/* App container styling */
+.app {
   display: flex;
-  flex-direction: column; /* Allows for a vertical layout of the navbar and content */
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-size: calc(1rem + 0.5vw);
+  /* Fluid typography */
 }
 
-
-.main-content {
-  margin-left:244 px;
-  padding: 20px;
-  flex: 1; /* Takes up remaining space below the navbar */
-  overflow-y: auto; /* Allows scrolling if content overflows */
-}
-
+/* Fixed top navbar styling */
 .content-topbar {
-  margin-left: 244px;
-  padding: 0px;
-  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10vh;
+  /* Responsive height */
+  background-color: #222;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
+/* Content body styling */
 .content-body {
-  margin-left: 244px;
-  padding: 20px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10vh;
+  /* Offset for the fixed topbar */
+  height: calc(100vh - 10vh);
+  /* Height minus topbar height */
+  overflow: hidden;
+  background-color: #202123;
+  color: #fff;
+  padding: 2vw;
+  /* Use relative padding */
 }
 
+/* Main section styling */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Bottom section styling */
+.bottom-section-no-scroll {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Column widths and styling */
+.left-col {
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.right-col {
+  flex: 1;
+  /* Takes up remaining space */
+  overflow-y: auto;
+  padding: 1rem;
+  max-height: calc(100vh - 10vh);
+  /* Adjusts height to fit within the viewport */
+}
+
+/* Optional: Add some space around the form */
+.right-col .form-container {
+  margin: 0 auto;
+  max-width: 40vw;
+  overflow-y: auto;
+  /* Relative width for scalability */
+}
+
+/* Styling for posts */
 .post {
   background-color: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 2vw;
+  margin-bottom: 1vw;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-  font-size: 18px;
+  font-size: calc(1.5rem + 0.5vw);
+  /* Fluid typography */
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 0.5vw;
 }
 
 .body {
-  font-size: 14px;
-  margin-bottom: 10px;
-  margin-left: 244px; /* Offset for the fixed sidebar */
+  font-size: calc(1rem + 0.3vw);
+  /* Fluid typography */
+  margin-bottom: 1vw;
 }
 
 .footer {
-  font-size: 12px;
+  font-size: calc(0.8rem + 0.2vw);
+  /* Fluid typography */
   color: #7f8c8d;
   text-align: right;
 }
 
 
-.sidebar {
-  
-  background-color: #202123; /* Dark background for sidebar */
-  height: 100vh; /* Full viewport height */
-  width: 244px; /* Width of the sidebar */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Space items evenly */
-  position: fixed; /* Fixed sidebar on the left */
-  top: 0;
-  left: 0;
-  overflow-y: auto; /* Allows scrolling if content overflows */
-}
-
-.sidebar > button {
-  margin: 10px; /* Add margin around the button */
-  padding: 10px 15px;
-  background-color: transparent; /* Button background color */
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.sidebar > .history {
-  flex: 1; /* Takes up remaining space to push other items down */
-  padding: 10px;
-}
-
-.sidebar > .history > nav {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* Ensure content is aligned to the bottom */
-}
-
-.side-bar-links {
-  padding: 10px;
-  margin: 10px;
-  height: 100%;
-}
-
-.history li{
-  list-style-type: none;
-  padding: 15px 0;
-  cursor: pointer;
-}
-
-.sidebar .history,
-.sidebar .history li,
-.sidebar .history nav p {
-    color: #fff; /* White text color */
-}
-
-.bottom-section{
+/* Bottom section content */
+.bottom-section {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -128,37 +113,75 @@
   width: 100%;
 }
 
-.info{
-  color: rgba(0, 0, 0, 0.7);
+/* Info text styling */
+.info {
+  color: rgba(241, 233, 233, 0.7);
 }
 
-.input-container{
+/* Input container styling */
+.input-container {
   position: relative;
   width: 100%;
-  max-width: 650px;
+  max-width: 60vw;
+  /* Scalable width */
+  color: rgb(181, 178, 171);
+  box-shadow: rgba(0, 0, 0, 0.91) 0 3px 3px,
+    rgba(0, 0, 0, 0.91) 0 4px 6px,
+    rgba(0, 0, 0, 0.91) 0 2px 3px,
+    rgba(0, 0, 0, 0.91) 0 -3px 6px;
 }
 
-input{
+/* Input styling */
+input {
   width: 100%;
-  font-size: 21px;
+  font-size: calc(1rem + 0.5vw);
+  /* Fluid typography */
   border: none;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 12px 15px;
+  background-color: rgba(199, 183, 183, 0.3);
+  padding: 1vw 1.5vw;
+  /* Scalable padding */
   border-radius: 5px;
   outline: #202123;
-  box-shadow: rgba(0, 0, 0, 0.91) 0 54px 55px,
-                rgba(0, 0, 0, 0.91) 0 4px 6px,
-                rgba(0, 0, 0, 0.91) 0 12px 3px,
-                rgba(0, 0, 0, 0.91) 0 -3px 6px,
 }
 
-input:focus{
+input:focus {
   outline: none;
 }
 
-#submit{
+/* Submit button styling */
+#submit {
   position: absolute;
-  bottom: 15px;
+  bottom: 1.5vw;
   right: 0;
   cursor: pointer;
+}
+
+/* Media Queries for Different Screen Sizes */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 25vw;
+  }
+
+  .right-col .form-container {
+    max-width: 80vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 35vw;
+  }
+
+  .content-topbar {
+    height: 8vh;
+  }
+
+  .content-body {
+    margin-top: 8vh;
+    height: calc(100vh - 8vh);
+  }
+
+  .right-col .form-container {
+    max-width: 90vw;
+  }
 }
