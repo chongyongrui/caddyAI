@@ -9,7 +9,7 @@ function App() {
   const [listOfPosts, setListOfPosts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/posts")
+    axios.get("http://localhost:3001/Posts") // Adjusted endpoint to match the backend route
       .then((response) => {
         console.log(response.data);
         setListOfPosts(response.data);
@@ -79,14 +79,18 @@ function App() {
                   <br></br>
                   Par 4
 
-
                   <div>
                     {listOfPosts.map((post) => (
                       <div className='post' key={post.id}>
                         <div>
-                          <div className='title'>{post.title}</div>
-                          <div className='body'>{post.postText}</div>
-                          <div className='footer'>{post.username}</div>
+                          <div className='title'>Fairway Hit: {post.fairwayHit ? 'Yes' : 'No'}</div>
+                          <div className='body'>
+                            {post.fairwayReason && <div>Reason: {post.fairwayReason}</div>}
+                            <div>GIR: {post.gir ? 'Yes' : 'No'}</div>
+                            {post.girReason && <div>Reason: {post.girReason}</div>}
+                            <div>Putts: {post.putts}</div>
+                          </div>
+                          <div className='footer'>User ID: {post.userId}</div>
                         </div>
                       </div>
                     ))}

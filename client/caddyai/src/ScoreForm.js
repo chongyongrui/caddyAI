@@ -13,6 +13,7 @@ const ScoreForm = () => {
         e.preventDefault();
 
         const formData = {
+            userId: -1, // Set userId to -1 for testing
             fairwayHit,
             fairwayReason,
             gir,
@@ -22,7 +23,19 @@ const ScoreForm = () => {
 
         console.log(formData);
 
-        // Submit formData to your backend or handle it as needed
+        fetch('http://localhost:3001/Posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // You can add a success message or reset the form here
+            })
+            .catch((error) => console.error('Error:', error));
     };
 
     return (

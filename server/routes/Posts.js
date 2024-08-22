@@ -1,20 +1,34 @@
-const express = require("express");
+// server/routes/posts.js
+
+const express = require('express');
 const router = express.Router();
-const { Posts } = require('../models');
+const db = require('../database');
 
-router.get("/", async (req, res) => {
-    const listOfPosts = await Posts.findAll()
-    res.json(listOfPosts);
+// Route to get all posts
+router.get('/', (req, res) => {
+    db.query('SELECT * FROM GolfStats', (err, results) => {
+        if (err) {
+            console.error('Error fetching data:', err);
+            return res.status(500).json({ error: 'Error fetching data' });
+        }
+        res.json(results);
+    });
 });
 
-// Define a path and handler for POST requests
-router.post("/", async (req, res) => {
-    //have to follow the format of the mysql table schema
-    const post = req.body;
-    await Posts.create(post); //sequalize is async method
-    res.json(post);
+// Route to submit a new post
+router.post('/', (req, res) => {
+    const { userId, fairwayHit, fairwayReason, gir, girReason, putts } = req.body;
+    const query = `
+    INSERT INTO GolfStats (userId, fairwayHit, fairwayReason, gir, girReason, putts)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+    db.query(query, [userId, fairwayHit, fairwayReason, gir, girReason, putts], (err, results) => {
+        if (err) {
+            console.error('Error inserting data:', err);
+            return res.status(500).json({ error: 'Error inserting data' });
+        }
+        res.status(201).json({ id: results.insertId, userId, fairwayHit, fairwayReason, gir, girReason, putts });
+    });
 });
-
-
 
 module.exports = router;

@@ -1,22 +1,19 @@
-const express = require('express');
-const app = express();
-const cors = require("cors");
+// server/index.js
 
-// Middleware to parse JSON and URL-encoded data
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-const db = require('./models');
+// Routes
+const postsRouter = require('./routes/Posts.js');
+app.use('/posts', postsRouter);
 
-// Routers
-const postRouter = require('./routes/Posts');
-app.use("/Posts", postRouter);
-
-// Sync database and start server
-db.sequelize.sync().then(() => {
-    app.listen(3001, () => {
-        console.log("Server has started on port 3001!");
-    });
-}).catch(error => {
-    console.error("Error syncing database:", error);
+// Start server
+const PORT = 3001;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
