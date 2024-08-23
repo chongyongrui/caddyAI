@@ -3,6 +3,10 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../database');
+const authenticateToken = require('../../authMiddleware');
+
+
+
 
 // Secret for JWT (You can move this to an environment variable)
 const JWT_SECRET = "your_jwt_secret_key";
@@ -54,6 +58,10 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Server error", error });
     }
+});
+
+router.get('/me', authenticateToken, (req, res) => {
+    res.json({ email: req.user.email });
 });
 
 module.exports = router;

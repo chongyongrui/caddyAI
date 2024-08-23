@@ -2,6 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import LandingPage from './landingpage.js'
+import StatsPage from './statspage.js';
 import Login from './login'
 
 import { useEffect, useState } from 'react'
@@ -19,6 +20,7 @@ function App() {
             element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
           />
           <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/stats" element={<StatsPage />} />
         </Routes>
       </BrowserRouter>
     </div>

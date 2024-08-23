@@ -1,114 +1,95 @@
-import React from 'react'
+// src/LandingPage.js
+
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react';
-import { Navbar, Nav, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Container, Row, Col } from 'react-bootstrap';
 import FormComponent from './ScoreForm'; // Assume you import your form component
-import Logout from './logout';
+import TopNavbar from './topnavbar'; // Import the new TopNavbar component
 
-const LandingPage = (props) => {
-  const [listOfPosts, setListOfPosts] = useState([]);
-  const navigate = useNavigate()
+const LandingPage = () => {
+    const [listOfPosts, setListOfPosts] = useState([]);
+    const [userEmail, setUserEmail] = useState('');
 
+    useEffect(() => {
+        // Fetch the user's email
+        axios.get('http://localhost:3001/auth/me', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then(response => {
+            setUserEmail(response.data.email);
+        })
+        .catch(error => {
+            console.error('Error fetching user email:', error);
+        });
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/postscore") // Adjusted endpoint to match the backend route
-      .then((response) => {
-        console.log(response.data);
-        setListOfPosts(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
-  return (
-    <div className="mainContainer">
-      {/* ////////////////top links//////////////////// */}
+        axios.get('http://localhost:3001/postscore') // Adjusted endpoint to match the backend route
+            .then((response) => {
+                console.log(response.data);
+                setListOfPosts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
 
-      <div className='content-topbar'>
-        <Navbar bg="dark" variant="dark" expand="lg" className="top-navbar-custom">
-          <Container>
-            <Navbar.Brand href="#">CaddyAi</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link href="#home">Home</Nav.Link>
-                <Nav.Link href="#rounds">Rounds</Nav.Link>
-                <Nav.Link href="#stats">Stats</Nav.Link>
-                <Nav.Link href="#settings">Settings</Nav.Link>
-                <Logout></Logout>
-              </Nav>
-              <Nav>
-                <Nav.Link href="#profile">
-                  <img
-                    src="your-profile-pic-url-here"
-                    alt="Profile"
-                    className="profile-pic"
-                  />
-                </Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      </div>
-
-      <div className='content-body'>
-        <Container fluid>
-          <section className='main'>
-            {/* ////////////////chat section//////////////////// */}
-            <div>
-              <h2>CaddyGPT</h2>
-              <ul className='feed'></ul>
-
-              <Row style={{ height: '60vh' }}>
-                <div className='bottom-section'>
-                  <div className='input-container'>
-                    <input />
-                    <div id='submit'>Go ⏎</div>
-                  </div>
-                  <br></br>
-                  <p className='info'>
-                    CaddyGPT is your personal golf caddy to help you shoot lower scores!
-                  </p>
-                </div>
-              </Row>
-
-              {/* ////////////////bottom section with 30/70 columns//////////////////// */}
-              <Row className="bottom-section-no-scroll">
-                <Col xs={4} className="left-col">
-                  <b>Default Golf Club - Dune Course</b>
-                  <br></br>
-                  Hole 3
-                  <br></br>
-                  Par 4
-
-                  <div>
-                    {listOfPosts.map((post) => (
-                      <div className='post' key={post.id}>
+    return (
+        <div className="mainContainer">
+            <TopNavbar userEmail={userEmail} /> {/* Use TopNavbar here */}
+            <div className='content-body'>
+                <Container fluid>
+                    <section className='main'>
                         <div>
-                          <div className='title'>Fairway Hit: {post.fairwayHit ? 'Yes' : 'No'}</div>
-                          <div className='body'>
-                            {post.fairwayReason && <div>Reason: {post.fairwayReason}</div>}
-                            <div>GIR: {post.gir ? 'Yes' : 'No'}</div>
-                            {post.girReason && <div>Reason: {post.girReason}</div>}
-                            <div>Putts: {post.putts}</div>
-                          </div>
-                          <div className='footer'>User ID: {post.userId}</div>
+                            <h2>CaddyGPT</h2>
+                            <ul className='feed'></ul>
+                            <Row style={{ height: '60vh' }}>
+                                <div className='bottom-section'>
+                                    <div className='input-container'>
+                                        <input />
+                                        <div id='submit'>Go ⏎</div>
+                                    </div>
+                                    <br />
+                                    <p className='info'>
+                                        CaddyGPT is your personal golf caddy to help you shoot lower scores!
+                                    </p>
+                                </div>
+                            </Row>
+                            <Row className="bottom-section-no-scroll">
+                                <Col xs={4} className="left-col">
+                                    <b>Default Golf Club - Dune Course</b>
+                                    <br />
+                                    Hole 3
+                                    <br />
+                                    Par 4
+                                    <div>
+                                        {listOfPosts.map((post) => (
+                                            <div className='post' key={post.id}>
+                                                <div>
+                                                    <div className='title'>Fairway Hit: {post.fairwayHit ? 'Yes' : 'No'}</div>
+                                                    <div className='body'>
+                                                        {post.fairwayReason && <div>Reason: {post.fairwayReason}</div>}
+                                                        <div>GIR: {post.gir ? 'Yes' : 'No'}</div>
+                                                        {post.girReason && <div>Reason: {post.girReason}</div>}
+                                                        <div>Putts: {post.putts}</div>
+                                                    </div>
+                                                    <div className='footer'>User ID: {post.userId}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </Col>
+                                <Col className="right-col">
+                                    <FormComponent email={userEmail} /> 
+                                </Col>
+                            </Row>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </Col>
-                <Col className="right-col">
-                  <FormComponent />
-                </Col>
-              </Row>
+                    </section>
+                </Container>
             </div>
-          </section>
-        </Container>
-      </div>
-    </div>
-  )
+        </div>
+    );
 }
 
-export default LandingPage
+export default LandingPage;

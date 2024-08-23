@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import './App.css'; // Ensure you import your CSS here if not already imported
 
-const ScoreForm = () => {
+const ScoreForm = ({ email }) => {
     const [fairwayHit, setFairwayHit] = useState(true);
     const [fairwayReason, setFairwayReason] = useState('');
     const [gir, setGir] = useState(true);
@@ -11,21 +12,36 @@ const ScoreForm = () => {
     const [hole, setHole] = useState(1); // Default hole value
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
+    const [courses, setCourses] = useState([]);
+    const [selectedCourse, setSelectedCourse] = useState('');
+    const [currentHole, setCurrentHole] = useState(1);
+   
+
+    useEffect(() => {
+        // Fetch courses when component mounts
+        fetch('http://localhost:3001/courses')
+            .then((response) => response.json())
+            .then((data) => setCourses(data))
+            .catch((error) => console.error('Error fetching courses:', error));
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const formData = {
-            userId: -1, // Set userId to -1 for testing
+            userId: -1,
             fairwayHit,
             fairwayReason,
             gir,
             girReason,
             putts,
-            course: 'Default Golf Course', // Example course name, you may adjust based on your needs
-            hole,
-            dateTime: new Date().toISOString()
+            email,
+            selectedCourse, // Use the correct field name here
+            hole: currentHole,
+            dateTime: new Date().toISOString().slice(0, 19).replace('T', ' ')
         };
+
+        console.log('Form Data:', formData); // Debugging: Log form data to verify
 
         fetch('http://localhost:3001/postscore', { // Ensure this matches your backend endpoint
             method: 'POST',
@@ -39,7 +55,13 @@ const ScoreForm = () => {
                 console.log(data);
                 setSuccess(true);
                 setError('');
-                setHole(hole + 1); // Increment the hole value
+
+                // Preserve form state and increment hole number
+                setTimeout(() => {
+                    setSuccess(false); // Reset success after a delay
+                }, 2000);
+
+                setCurrentHole(prevHole => prevHole < 18 ? prevHole + 1 : 1); // Wrap around hole number
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -51,6 +73,38 @@ const ScoreForm = () => {
     return (
         <Container className="form-container mt-4">
             <Form onSubmit={handleSubmit}>
+                {/* Course Selection */}
+                <Form.Group controlId="golfCourse" className="mb-3">
+                    <Form.Label>Golf Course</Form.Label>
+                    <Form.Control
+                        as="select"
+                        value={selectedCourse}
+                        onChange={(e) => {
+                            console.log('Selected Course:', e.target.value); // Debugging: Log selected course
+                            setSelectedCourse(e.target.value);
+                        }}
+                    >
+                        <option value="">Select Course</option>
+                        {courses.map((course) => (
+                            <option key={course.id} value={course.course_name}>
+                                {course.course_name}
+                            </option>
+                        ))}
+                    </Form.Control>
+                </Form.Group>
+
+                {/* Hole Selection */}
+                <Form.Group controlId="golfHole" className="mb-3">
+                    <Form.Label>Current Hole</Form.Label>
+                    <Form.Control
+                        type="number"
+                        value={currentHole}
+                        onChange={(e) => setCurrentHole(parseInt(e.target.value, 10))}
+                        min={1}
+                        max={18}
+                    />
+                </Form.Group>
+
                 {/* Fairway Hit */}
                 <Row className="align-items-center mb-3">
                     <Col xs="auto">
