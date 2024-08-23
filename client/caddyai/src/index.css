@@ -12,3 +12,18 @@
     /* Full viewport height */
     overflow: hidden;
 }
+
+/* styles.css */
+/* Content body styling */
+.body {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+    /* Offset for the fixed topbar */
+
+    overflow: hidden;
+    background-color: #202123;
+    color: #fff;
+    padding: 2vw;
+    /* Use relative padding */
+}

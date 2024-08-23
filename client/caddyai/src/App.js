@@ -1,10 +1,9 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import LandingPage from './home'
+import LandingPage from './landingpage.js'
 import Login from './login'
-import './App.css'
+
 import { useEffect, useState } from 'react'
 
 function App() {

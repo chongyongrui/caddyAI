@@ -1,8 +1,6 @@
-// server/database.js
+const mysql = require('mysql2/promise');
 
-const mysql = require('mysql2');
-
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
     host: 'localhost',
     user: 'root', // Replace with your MySQL username
     password: 'password', // Replace with your MySQL password
@@ -10,12 +8,6 @@ const connection = mysql.createConnection({
     port: 3306 // Default MySQL port
 });
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
-    }
-    console.log('Connected to MySQL');
-});
+module.exports = pool;
 
-module.exports = connection;
+// No need for connection.connect() because createPool handles the connection pooling automatically.
