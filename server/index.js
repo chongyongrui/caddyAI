@@ -1,5 +1,3 @@
-// server/index.js
-
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -11,11 +9,12 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-const postsRouter = require('./routes/Posts.js');
+const postsRouter = require('./routes/postscore.js');
 const authRoutes = require('./routes/auth');
-app.use('/posts', postsRouter);
+const coursesRouter = require('./routes/courses'); 
 app.use('/auth', authRoutes);
-
+app.use('/courses', coursesRouter);
+app.use('/postscore', postsRouter);
 
 // Start server
 const PORT = 3001;

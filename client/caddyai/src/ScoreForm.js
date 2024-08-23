@@ -8,6 +8,9 @@ const ScoreForm = () => {
     const [gir, setGir] = useState(true);
     const [girReason, setGirReason] = useState('');
     const [putts, setPutts] = useState(2);
+    const [hole, setHole] = useState(1); // Default hole value
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -19,11 +22,12 @@ const ScoreForm = () => {
             gir,
             girReason,
             putts,
+            course: 'Default Golf Course', // Example course name, you may adjust based on your needs
+            hole,
+            dateTime: new Date().toISOString()
         };
 
-        console.log(formData);
-
-        fetch('http://localhost:3001/Posts', {
+        fetch('http://localhost:3001/postscore', { // Ensure this matches your backend endpoint
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,9 +37,15 @@ const ScoreForm = () => {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                // You can add a success message or reset the form here
+                setSuccess(true);
+                setError('');
+                setHole(hole + 1); // Increment the hole value
             })
-            .catch((error) => console.error('Error:', error));
+            .catch((error) => {
+                console.error('Error:', error);
+                setError('Error submitting data. Please try again.');
+                setSuccess(false);
+            });
     };
 
     return (
@@ -127,9 +137,17 @@ const ScoreForm = () => {
                     </div>
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
+                {/* Submit Button */}
+                <Button
+                    variant={success ? "success" : "primary"}
+                    type="submit"
+                    style={{ borderColor: success ? "green" : "initial" }}
+                >
                     Submit
                 </Button>
+
+                {/* Error Message */}
+                {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
             </Form>
         </Container>
     );

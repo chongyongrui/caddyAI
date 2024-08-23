@@ -12,7 +12,7 @@ const LandingPage = (props) => {
 
 
   useEffect(() => {
-    axios.get("http://localhost:3001/Posts") // Adjusted endpoint to match the backend route
+    axios.get("http://localhost:3001/postscore") // Adjusted endpoint to match the backend route
       .then((response) => {
         console.log(response.data);
         setListOfPosts(response.data);

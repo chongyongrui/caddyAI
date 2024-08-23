@@ -15,18 +15,22 @@ router.get('/', async (req, res) => {
 
 // Route to submit a new post
 router.post('/', async (req, res) => {
-    const { userId, fairwayHit, fairwayReason, gir, girReason, putts } = req.body;
+    const { email, fairwayHit, fairwayReason, gir, girReason, putts, course, hole, dateTime } = req.body;
+    const userId = -1; // Set userId to -1 for development
+
     const query = `
-        INSERT INTO GolfStats (userId, fairwayHit, fairwayReason, gir, girReason, putts)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO GolfStats (userId, email, fairwayHit, fairwayReason, gir, girReason, putts, course, hole, dateTime)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
+
     try {
-        const [results] = await pool.query(query, [userId, fairwayHit, fairwayReason, gir, girReason, putts]);
-        res.status(201).json({ id: results.insertId, userId, fairwayHit, fairwayReason, gir, girReason, putts });
+        const [results] = await pool.query(query, [userId, email, fairwayHit, fairwayReason, gir, girReason, putts, course, hole, dateTime]);
+        res.status(201).json({ id: results.insertId, userId, email, fairwayHit, fairwayReason, gir, girReason, putts, course, hole, dateTime });
     } catch (err) {
         console.error('Error inserting data:', err);
         res.status(500).json({ error: 'Error inserting data' });
     }
 });
+
 
 module.exports = router;
