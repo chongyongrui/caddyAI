@@ -1,0 +1,15 @@
+.greyscale-btn {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #666;
+    filter: grayscale(100%);
+}
+
+.greyscale-btn:hover,
+.greyscale-btn:focus,
+.greyscale-btn.active {
+    background-color: #d8d8d8;
+    color: #000;
+    border-color: #444;
+    filter: grayscale(50%);
+}

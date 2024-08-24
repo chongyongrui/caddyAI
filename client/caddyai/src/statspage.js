@@ -1,11 +1,10 @@
-// src/StatsPage.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Container, Row, Col, Table } from 'react-bootstrap';
+import { Container, Row, Col, Table, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import TopNavbar from './topnavbar';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import './statspage.css'; 
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
@@ -13,60 +12,104 @@ const StatsPage = () => {
     const [userEmail, setUserEmail] = useState('');
     const [statsData, setStatsData] = useState(null);
     const [recentGame, setRecentGame] = useState(null);
+    const [courseName, setCourseName] = useState('');
+    const [parValues, setParValues] = useState([]);
+    const [viewMode, setViewMode] = useState('all'); // New state for toggle
+
+    const fetchParValues = async (courseName) => {
+        try {
+            const response = await axios.get('http://localhost:3001/courses/coursesearch', {
+                params: { name: courseName }
+            });
+            
+            const parValues = [
+                response.data.hole1_par, response.data.hole2_par, response.data.hole3_par, response.data.hole4_par, response.data.hole5_par,
+                response.data.hole6_par, response.data.hole7_par, response.data.hole8_par, response.data.hole9_par, response.data.hole10_par,
+                response.data.hole11_par, response.data.hole12_par, response.data.hole13_par, response.data.hole14_par, response.data.hole15_par,
+                response.data.hole16_par, response.data.hole17_par, response.data.hole18_par
+            ];
+            
+            return { parValues };
+        } catch (error) {
+            console.error('Error fetching course data:', error);
+            return null;
+        }
+    };
 
     useEffect(() => {
-        // Fetch the user's email
-        axios.get('http://localhost:3001/auth/me', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
+        const fetchUserData = async () => {
+            try {
+                // Fetch the user's email
+                const userResponse = await axios.get('http://localhost:3001/auth/me', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const email = userResponse.data.email;
+                setUserEmail(email);
+
+                // Fetch the stats data
+                const statsResponse = await axios.get('http://localhost:3001/stats/stats', {
+                    params: { email }
+                });
+                setStatsData(statsResponse.data);
+
+                // Fetch the recent game data
+                const recentGameResponse = await axios.get('http://localhost:3001/stats/recent-game', {
+                    params: { email }
+                });
+
+                const recentGameData = recentGameResponse.data;
+                setRecentGame(recentGameData);
+                if (recentGameData.length > 0) {
+                    const courseName = recentGameData[0].course;
+                    setCourseName(courseName);
+
+                    // Fetch par values based on the course name
+                    const response = await axios.get('http://localhost:3001/courses/coursesearch', {
+                        params: { name: courseName }
+                    });
+                    
+                    const fetchedParValues = [
+                        response.data.hole1_par, response.data.hole2_par, response.data.hole3_par, response.data.hole4_par, response.data.hole5_par,
+                        response.data.hole6_par, response.data.hole7_par, response.data.hole8_par, response.data.hole9_par, response.data.hole10_par,
+                        response.data.hole11_par, response.data.hole12_par, response.data.hole13_par, response.data.hole14_par, response.data.hole15_par,
+                        response.data.hole16_par, response.data.hole17_par, response.data.hole18_par
+                    ];
+                    setParValues(fetchedParValues);
+                }
+            
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-        })
-        .then(response => {
-            setUserEmail(response.data.email);
-            return axios.get('http://localhost:3001/stats/stats', {
-                params: { email: response.data.email }
-            });
-        })
-        .then(response => {
-            setStatsData(response.data);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+        };
 
-
-    axios.get('http://localhost:3001/stats/recent-game', {
-            params: { email: userEmail },
-        })
-        .then(response => {
-            setRecentGame(response.data);
-            console.log(response.data)
-        })
-        .catch(error => {
-            console.error('Error fetching recent game data:', error);
-        });
-    }, [userEmail]);
+        fetchUserData();
+    }, []);
 
     if (!statsData) {
         return <div>Loading...</div>;
     }
 
+    // Filter data based on the viewMode
+    const displayedStats = viewMode === 'latest' && recentGame ? recentGame : statsData;
+    const totalFairways = displayedStats.length;
+
     // Process data
-    const fairwayHits = statsData.filter(post => post.fairwayHit);
-    const totalFairways = statsData.length;
+    const fairwayHits = displayedStats.filter(post => post.fairwayHit);
     const fairwaysHitPercentage = (fairwayHits.length / totalFairways * 100).toFixed(2);
 
-    const greensHits = statsData.filter(post => post.gir);
+    const greensHits = displayedStats.filter(post => post.gir);
     const greensHitPercentage = (greensHits.length / totalFairways * 100).toFixed(2);
 
-    const fairwayReasons = statsData.reduce((acc, post) => {
+    const fairwayReasons = displayedStats.reduce((acc, post) => {
         if (!post.fairwayHit && post.fairwayReason) {
             acc[post.fairwayReason] = (acc[post.fairwayReason] || 0) + 1;
         }
         return acc;
     }, {});
 
-    const girReasons = statsData.reduce((acc, post) => {
+    const girReasons = displayedStats.reduce((acc, post) => {
         if (!post.gir && post.girReason) {
             acc[post.girReason] = (acc[post.girReason] || 0) + 1;
         }
@@ -96,58 +139,81 @@ const StatsPage = () => {
         }],
     };
 
-    const calculateHoleScore = (game) => {
+    const calculateHoleScore = (game, parValue) => {
         // Convert boolean values to integers (true -> 1, false -> 0)
         const fairwayHit = game.fairwayHit ? 1 : 0;
         const gir = game.gir ? 1 : 0;
-        return (1 - fairwayHit) + (1 - gir) + game.putts - 2 ;
+        return (1 - fairwayHit) + (1 - gir) + game.putts - 2 + parValue;
     };
-    
-    const renderScoreCard = (games) => {
-        // Assuming holes are from 1 to 18
+
+    const renderScoreCard = (games, parValues) => {
         let holes = Array.from({ length: 18 }, (_, index) => index + 1);
         let scores = holes.map(hole => {
-            // Find the game data for each hole
             const game = games.find(g => g.hole === hole);
             return {
                 hole,
-                score: game ? calculateHoleScore(game) : 0
+                score: game ? calculateHoleScore(game, parValues[hole - 1]) : 0,
+                par: parValues[hole - 1]
             };
         });
-
-        // Split scores into two rows of 9 holes each
+    
         let row1 = scores.slice(0, 9).map(score => score.hole);
-        let row2 = scores.slice(0, 9).map(score => score.score);
-        let row3 = scores.slice(9, 18).map(score => score.hole);
-        let row4 = scores.slice(9, 18).map(score => score.score);
-
+        let row2 = scores.slice(0, 9).map(score => score.par);
+        let row3 = scores.slice(0, 9).map(score => score.score);
+        let row4 = scores.slice(9, 18).map(score => score.hole);
+        let row5 = scores.slice(9, 18).map(score => score.par);
+        let row6 = scores.slice(9, 18).map(score => score.score);
+    
+        const getStyleForScore = (score, par) => {
+            if (score === par - 1) {
+                return { borderRadius: '50%', border: '2px solid black', textAlign: 'center' };
+            } else if (score >= par + 1) {
+                return {
+                    border: `${score - par}px solid black`,
+                    textAlign: 'center'
+                };
+            }
+            return { textAlign: 'center' };
+        };
+    
         return (
             <Table bordered>
                 <thead>
                     <tr>
                         {row1.map(hole => (
-                            <th key={hole}>Hole {hole}</th>
+                            <th key={hole} style={{ textAlign: 'center' }}>Hole {hole}</th>
                         ))}
                     </tr>
                     <tr>
-                        {row2.map((score, index) => (
-                            <td key={index}>{score}</td>
+                        {row2.map((par, index) => (
+                            <td key={index} style={{ textAlign: 'center' }}>{par}</td>
                         ))}
                     </tr>
                     <tr>
-                        {row3.map(hole => (
-                            <th key={hole}>Hole {hole}</th>
+                        {row3.map((score, index) => (
+                            <td key={index} style={getStyleForScore(score, row2[index])}>{score}</td>
                         ))}
                     </tr>
                     <tr>
-                        {row4.map((score, index) => (
-                            <td key={index}>{score}</td>
+                        {row4.map(hole => (
+                            <th key={hole} style={{ textAlign: 'center' }}>Hole {hole}</th>
+                        ))}
+                    </tr>
+                    <tr>
+                        {row5.map((par, index) => (
+                            <td key={index} style={{ textAlign: 'center' }}>{par}</td>
+                        ))}
+                    </tr>
+                    <tr>
+                        {row6.map((score, index) => (
+                            <td key={index} style={getStyleForScore(score, row5[index])}>{score}</td>
                         ))}
                     </tr>
                 </thead>
             </Table>
         );
     };
+    
 
     return (
         <div className="mainContainer">
@@ -155,12 +221,30 @@ const StatsPage = () => {
             <div className='content-body'>
                 <Container className="mt-4">
                     <h1>Stats Page</h1>
-                    <p>Welcome to the Stats page! Here you can view your golf statistics and performance data.</p>
+                    <Row>
+                        <Col><p>Welcome to the Stats page! Here you can view your golf statistics and performance data.</p>
+                        </Col>
+                    <Col className="text-center">
+                        <ToggleButtonGroup
+                            type="radio"
+                            name="viewMode"
+                            value={viewMode}
+                            onChange={val => setViewMode(val)}
+                        >
+                            <ToggleButton id="tbg-radio-1" value="all" className="greyscale-btn">
+                        All Games
+                    </ToggleButton>
+                    <ToggleButton id="tbg-radio-2" value="latest" className="greyscale-btn">
+                        Latest Game
+                    </ToggleButton>
+                        </ToggleButtonGroup>
+                    </Col>
+                    </Row>
+                    
                     <br/><br/><br/>
                     <Row>
                         <Col>
                             <h4>Average Putts Per Hole</h4>
-                            {/* Calculate average putts per hole */}
                             <h2>{(statsData.reduce((sum, post) => sum + post.putts, 0) / totalFairways).toFixed(2)}</h2>
                         </Col>
                         <Col>
@@ -187,10 +271,9 @@ const StatsPage = () => {
                     <Row>
                     {recentGame ? (
                         <div>
-                            <h4>Most Recent Game</h4>
-                            {renderScoreCard(recentGame)}
+                            <h4>Most Recent Game - {courseName}</h4>
+                            {renderScoreCard(recentGame, parValues)}
                             <br></br>
-                            
                         </div>
                     ) : (
                         <p>Loading recent game data...</p>
