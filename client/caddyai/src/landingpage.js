@@ -57,29 +57,7 @@ const LandingPage = () => {
                                 </div>
                             </Row>
                             <Row className="bottom-section-no-scroll">
-                                <Col xs={4} className="left-col">
-                                    <b>Default Golf Club - Dune Course</b>
-                                    <br />
-                                    Hole 3
-                                    <br />
-                                    Par 4
-                                    <div>
-                                        {listOfPosts.map((post) => (
-                                            <div className='post' key={post.id}>
-                                                <div>
-                                                    <div className='title'>Fairway Hit: {post.fairwayHit ? 'Yes' : 'No'}</div>
-                                                    <div className='body'>
-                                                        {post.fairwayReason && <div>Reason: {post.fairwayReason}</div>}
-                                                        <div>GIR: {post.gir ? 'Yes' : 'No'}</div>
-                                                        {post.girReason && <div>Reason: {post.girReason}</div>}
-                                                        <div>Putts: {post.putts}</div>
-                                                    </div>
-                                                    <div className='footer'>User ID: {post.userId}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </Col>
+                                
                                 <Col className="right-col">
                                     <FormComponent email={userEmail} /> 
                                 </Col>

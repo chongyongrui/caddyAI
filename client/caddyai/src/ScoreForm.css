@@ -1,0 +1,4 @@
+.form-container mt-4{
+    overflow-y: auto;
+    overflow-x: hidden;
+}

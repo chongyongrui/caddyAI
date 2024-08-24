@@ -21,7 +21,7 @@
     margin-top: 10vh;
     /* Offset for the fixed topbar */
 
-    overflow: hidden;
+    overflow-y: auto;
     background-color: #202123;
     color: #fff;
     padding: 2vw;

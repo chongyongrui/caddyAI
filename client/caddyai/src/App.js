@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import LandingPage from './landingpage.js'
 import StatsPage from './statspage.js';
 import Login from './login'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react'
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/stats" element={<StatsPage />} />
         </Routes>
       </BrowserRouter>
+      <ToastContainer />
     </div>
   )
 }

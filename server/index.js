@@ -11,11 +11,13 @@ const postsRouter = require('./routes/postscore.js');
 const authRoutes = require('./routes/auth');
 const coursesRouter = require('./routes/courses');
 const statsRouter = require('./routes/stats'); // Import the stats router
+const roundsRouter = require('./routes/gamestats'); // Import the stats router
 
 app.use('/auth', authRoutes);
 app.use('/courses', coursesRouter);
 app.use('/postscore', postsRouter);
 app.use('/stats', statsRouter); // Use the stats router
+app.use('/gamestats', roundsRouter); // Use the stats router
 
 // Start server
 const PORT = 3001;

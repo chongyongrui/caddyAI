@@ -15,23 +15,26 @@ router.get('/', async (req, res) => {
 
 // Route to submit a new post
 router.post('/', async (req, res) => {
-    const { email, fairwayHit, fairwayReason, gir, girReason, putts, selectedCourse, hole, dateTime , gameID } = req.body;
+    const { gameid, datetime, email, total_score, teebox, scores, course} = req.body;
 
-    const userId = -1; // Set userId to -1 for development
-    console.log(selectedCourse)
+    // Override the userid with -1
+    const userid = -1;
+
+    // Serialize the scores dictionary to a JSON string
+    const scoresJson = JSON.stringify(scores);
+
     const query = `
-        INSERT INTO golfstats (userId, email, fairwayHit, fairwayReason, gir, girReason, putts, course, hole, dateTime, gameid)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO gamestats (gameid, datetime, userid, email, total_score, teebox, scores, course)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     try {
-        const [results] = await pool.query(query, [userId, email, fairwayHit, fairwayReason, gir, girReason, putts, selectedCourse, hole, dateTime, gameID]);
-        res.status(201).json({ id: results.insertId, userId, email, fairwayHit, fairwayReason, gir, girReason, putts, selectedCourse, hole, dateTime, gameID});
+        const [results] = await pool.query(query, [gameid, datetime, userid, email, total_score, teebox, scoresJson, course]);
+        res.status(201).json({ id: results.insertId, gameid, datetime, userid, email, total_score, teebox, scores, course });
     } catch (err) {
         console.error('Error inserting data:', err);
         res.status(500).json({ error: 'Error inserting data' });
     }
 });
-
 
 module.exports = router;

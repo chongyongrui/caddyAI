@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
   font-size: calc(1rem + 0.5vw);
   /* Fluid typography */
 }
@@ -29,7 +29,8 @@
   /* Offset for the fixed topbar */
   height: calc(100vh - 10vh);
   /* Height minus topbar height */
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: none;
   background-color: #202123;
   color: #fff;
   padding: 2vw;
@@ -41,20 +42,21 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+ 
+  
 }
 
 /* Bottom section styling */
 .bottom-section-no-scroll {
   display: flex;
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* Column widths and styling */
 .left-col {
   padding: 1rem;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .right-col {
@@ -70,7 +72,7 @@
 .right-col .form-container {
   margin: 0 auto;
   max-width: 40vw;
-  overflow-y: auto;
+  
   /* Relative width for scalability */
 }
 
