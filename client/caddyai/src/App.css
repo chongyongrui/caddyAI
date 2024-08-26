@@ -15,7 +15,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 10vh;
+  height: 100px;
   /* Responsive height */
   background-color: #222;
   z-index: 1000;
@@ -37,11 +37,11 @@
 .content-body {
   display: flex;
   flex-direction: column;
-  margin-top: 10vh;
+  margin-top: 100px;
   /* Offset for the fixed topbar */
-  height: calc(100vh - 10vh);
+  height: calc(100vh - 100px);
   /* Height minus topbar height */
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   background-color: #202123;
   color: #fff;

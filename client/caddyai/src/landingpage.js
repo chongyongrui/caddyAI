@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
 import FormComponent from './ScoreForm'; // Assume you import your form component
 import TopNavbar from './topnavbar'; // Import the new TopNavbar component
 import Chatbot from './chatbot';
+import "./landingpage.css";
 
 const LandingPage = () => {
     const [listOfPosts, setListOfPosts] = useState([]);
@@ -43,22 +44,42 @@ const LandingPage = () => {
 
 
             <div className='content-body'>
-                <Container fluid>
-                    <section className='main'>
+            <Container fluid>
+                <section className='main'>
+                    <Tab.Container defaultActiveKey="caddy">
                         <div>
                             <h2>CaddyGPT</h2>
-                            <Row style={{ height: '60vh' }}>
-                                <Chatbot />
+                            <Row>
+                            <Nav variant="tabs" className="ml-auto custom-tabs" style={{ width: '100%', justifyContent: 'flex-end' }}>
+                                    <Nav.Item style={{color: "white"}}>
+                                        <Nav.Link eventKey="caddy">Caddy</Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item>
+                                        <Nav.Link eventKey="scorecard">Scorecard</Nav.Link>
+                                    </Nav.Item>
+                                </Nav>
                             </Row>
-                            <Row className="bottom-section">
-
-                                <Col className="right-col">
-                                    <FormComponent email={userEmail} />
-                                </Col>
+                            <div></div> <div></div> <div></div>
+                            <Row>
+                                <Tab.Content>
+                                    <Tab.Pane eventKey="caddy">
+                                        <Chatbot />
+                                    </Tab.Pane>
+                                    <Tab.Pane eventKey="scorecard">
+                                        <Row className="bottom-section">
+                                            
+                                            <Col className="right-col">
+                                                <FormComponent email={userEmail} />
+                                            </Col>
+                                        </Row>
+                                    </Tab.Pane>
+                                </Tab.Content>
                             </Row>
+                            
                         </div>
-                    </section>
-                </Container>
+                    </Tab.Container>
+                </section>
+            </Container>
             </div>
         </div>
     );

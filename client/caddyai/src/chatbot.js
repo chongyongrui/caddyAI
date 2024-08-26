@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './chatbot.css'; // Import the CSS file
+import ReactMarkdown from 'react-markdown';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 const Chatbot = () => {
     const [inputValue, setInputValue] = useState("");
     const [messages, setMessages] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -18,14 +21,17 @@ const Chatbot = () => {
             { text: inputValue, type: 'sender' }
         ]);
 
-        const aiResponse = await generateAIResponse(inputValue);
         setInputValue('');
+        setLoading(true); // Set loading state to true to show spinner
 
-        // Add the AI's reply to the messages array
+        const aiResponse = await generateAIResponse(inputValue);
+
+        // Add the AI's reply to the messages array and remove the loading state
         setMessages((prevMessages) => [
             ...prevMessages,
             { text: aiResponse, type: 'reply' }
         ]);
+        setLoading(false); // Set loading state to false after AI response
     };
 
     // Initialize API and Generative Model
@@ -37,7 +43,6 @@ const Chatbot = () => {
     // Function to generate AI response
     const generateAIResponse = async (prompt) => {
         try {
-
             const result = await model.generateContent(prompt);
             const response = await result.response;
             const text = response.text();
@@ -58,9 +63,16 @@ const Chatbot = () => {
                         key={index}
                         className={`chat-bubble ${msg.type === 'sender' ? 'sender' : 'reply'}`}
                     >
-                        {msg.text}
+                        <ReactMarkdown>{msg.text}</ReactMarkdown>
                     </div>
                 ))}
+                {loading && (
+                    <div className="chat-bubble reply">
+                         <div className="spinner-border text-black" role="status">
+                            <span className="sr-only"></span>
+                        </div>
+                    </div>
+                )}
             </div>
             <div className='input-container'>
                 <input
