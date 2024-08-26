@@ -1,0 +1,102 @@
+.chat-bubble.sender {
+    background-color: #171717;
+    color: white;
+    text-align: right;
+    margin-left: auto;
+    /* Align sender messages to the right */
+}
+
+.chat-bubble.reply {
+    background-color: #e0e0e0;
+    color: black;
+    text-align: left;
+    margin-right: auto;
+    /* Align replies to the left */
+}
+
+
+
+.bottom-section {
+    display: flex;
+    flex-direction: column;
+    height: 55vh;
+    /* Adjust height as needed */
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    content: center;
+    align-items: center;
+}
+
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #363636;
+    width: 90%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    content: center;
+    border-radius: 5px;
+}
+
+/* Input container styling */
+.input-container {
+    position: relative;
+    width: 90%;
+    border-radius: 5px;
+    /* Scalable width */
+    color: rgb(48, 48, 48);
+    box-shadow: rgba(0, 0, 0, 0.91) 0 3px 3px,
+        rgba(0, 0, 0, 0.91) 0 4px 6px,
+        rgba(0, 0, 0, 0.91) 0 2px 3px,
+        rgba(0, 0, 0, 0.91) 0 -3px 6px;
+}
+
+/* Input styling */
+input {
+    width: 100%;
+    font-size: calc(1rem + 0.5vw);
+    /* Fluid typography */
+    border: none;
+    background-color: rgba(199, 183, 183, 0.3);
+    padding: 1vw 1.5vw;
+    /* Scalable padding */
+    border-radius: 5px;
+    outline: #202123;
+    color: white
+}
+
+input:focus {
+    outline: none;
+}
+
+/* Submit button styling */
+#submit {
+    position: absolute;
+    bottom: 2vw;
+    right: 0;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+#submit:hover {
+    background-color: #0056b3;
+}
+
+.chat-bubble {
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 15px;
+    margin: 5px 0;
+    background-color: #4b4a4a;
+    color: white;
+    align-self: flex-end;
+}
+
+.info {
+    margin: 10px;
+    font-size: 14px;
+    color: #666;
+}

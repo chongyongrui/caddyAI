@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import FormComponent from './ScoreForm'; // Assume you import your form component
 import TopNavbar from './topnavbar'; // Import the new TopNavbar component
+import Chatbot from './chatbot';
 
 const LandingPage = () => {
     const [listOfPosts, setListOfPosts] = useState([]);
@@ -18,12 +19,12 @@ const LandingPage = () => {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-        .then(response => {
-            setUserEmail(response.data.email);
-        })
-        .catch(error => {
-            console.error('Error fetching user email:', error);
-        });
+            .then(response => {
+                setUserEmail(response.data.email);
+            })
+            .catch(error => {
+                console.error('Error fetching user email:', error);
+            });
 
         axios.get('http://localhost:3001/postscore') // Adjusted endpoint to match the backend route
             .then((response) => {
@@ -37,29 +38,22 @@ const LandingPage = () => {
 
     return (
         <div className="mainContainer">
-            <TopNavbar userEmail={userEmail} /> {/* Use TopNavbar here */}
+
+            <TopNavbar userEmail={userEmail} className='top-navbar-custom ' />
+
+
             <div className='content-body'>
                 <Container fluid>
                     <section className='main'>
                         <div>
                             <h2>CaddyGPT</h2>
-                            <ul className='feed'></ul>
                             <Row style={{ height: '60vh' }}>
-                                <div className='bottom-section'>
-                                    <div className='input-container'>
-                                        <input />
-                                        <div id='submit'>Go ⏎</div>
-                                    </div>
-                                    <br />
-                                    <p className='info'>
-                                        CaddyGPT is your personal golf caddy to help you shoot lower scores!
-                                    </p>
-                                </div>
+                                <Chatbot />
                             </Row>
-                            <Row className="bottom-section-no-scroll">
-                                
+                            <Row className="bottom-section">
+
                                 <Col className="right-col">
-                                    <FormComponent email={userEmail} /> 
+                                    <FormComponent email={userEmail} />
                                 </Col>
                             </Row>
                         </div>

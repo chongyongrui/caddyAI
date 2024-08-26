@@ -3,9 +3,10 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow-y: auto;
+  overflow: hidden;
   font-size: calc(1rem + 0.5vw);
-  /* Fluid typography */
+  justify-content: center;
+  /* Center content vertically */
 }
 
 /* Fixed top navbar styling */
@@ -21,6 +22,17 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Top Navbar CSS */
+.top-navbar-custom {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  /* Ensure it stays above other content */
+}
+
 /* Content body styling */
 .content-body {
   display: flex;
@@ -30,11 +42,12 @@
   height: calc(100vh - 10vh);
   /* Height minus topbar height */
   overflow-y: auto;
-  overflow-x: none;
+  overflow-x: hidden;
   background-color: #202123;
   color: #fff;
   padding: 2vw;
-  /* Use relative padding */
+  box-sizing: border-box;
+  /* Ensure padding is considered in the height calculation */
 }
 
 /* Main section styling */
@@ -42,12 +55,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
- 
-  
+  justify-content: center;
+  overflow: hidden;
 }
 
 /* Bottom section styling */
-.bottom-section-no-scroll {
+.bottom-section {
   display: flex;
   height: 100%;
   overflow-y: auto;
@@ -61,18 +74,18 @@
 
 .right-col {
   flex: 1;
-  /* Takes up remaining space */
   overflow-y: auto;
   padding: 1rem;
-  max-height: calc(100vh - 10vh);
+  max-height: calc(100vh - 20vh);
   /* Adjusts height to fit within the viewport */
+  box-sizing: border-box;
+  /* Ensure padding is considered in the height calculation */
 }
 
 /* Optional: Add some space around the form */
 .right-col .form-container {
   margin: 0 auto;
   max-width: 40vw;
-  
   /* Relative width for scalability */
 }
 
@@ -83,79 +96,30 @@
   margin-bottom: 1vw;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
+  /* Ensure text wraps to avoid overflow */
 }
 
 .title {
   font-size: calc(1.5rem + 0.5vw);
-  /* Fluid typography */
   font-weight: bold;
   margin-bottom: 0.5vw;
 }
 
 .body {
   font-size: calc(1rem + 0.3vw);
-  /* Fluid typography */
   margin-bottom: 1vw;
 }
 
 .footer {
   font-size: calc(0.8rem + 0.2vw);
-  /* Fluid typography */
   color: #7f8c8d;
   text-align: right;
-}
-
-
-/* Bottom section content */
-.bottom-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
 }
 
 /* Info text styling */
 .info {
   color: rgba(241, 233, 233, 0.7);
-}
-
-/* Input container styling */
-.input-container {
-  position: relative;
-  width: 100%;
-  max-width: 60vw;
-  /* Scalable width */
-  color: rgb(181, 178, 171);
-  box-shadow: rgba(0, 0, 0, 0.91) 0 3px 3px,
-    rgba(0, 0, 0, 0.91) 0 4px 6px,
-    rgba(0, 0, 0, 0.91) 0 2px 3px,
-    rgba(0, 0, 0, 0.91) 0 -3px 6px;
-}
-
-/* Input styling */
-input {
-  width: 100%;
-  font-size: calc(1rem + 0.5vw);
-  /* Fluid typography */
-  border: none;
-  background-color: rgba(199, 183, 183, 0.3);
-  padding: 1vw 1.5vw;
-  /* Scalable padding */
-  border-radius: 5px;
-  outline: #202123;
-}
-
-input:focus {
-  outline: none;
-}
-
-/* Submit button styling */
-#submit {
-  position: absolute;
-  bottom: 1.5vw;
-  right: 0;
-  cursor: pointer;
 }
 
 /* Media Queries for Different Screen Sizes */
