@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Modal, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
-import './App.css'; // Ensure you import your CSS here if not already imported
+import '../App.css'; // Ensure you import your CSS here if not already imported
 import { v4 as uuidv4 } from 'uuid';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
