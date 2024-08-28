@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Table, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-import TopNavbar from './topnavbar';
+import TopNavbar from '../utils/topnavbar';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
-import './statspage.css'; 
+import './statspage.css';
 import renderScoreCard from './scorecard';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
@@ -22,14 +22,14 @@ const StatsPage = () => {
             const response = await axios.get('http://localhost:3001/courses/coursesearch', {
                 params: { name: courseName }
             });
-            
+
             const parValues = [
                 response.data.hole1_par, response.data.hole2_par, response.data.hole3_par, response.data.hole4_par, response.data.hole5_par,
                 response.data.hole6_par, response.data.hole7_par, response.data.hole8_par, response.data.hole9_par, response.data.hole10_par,
                 response.data.hole11_par, response.data.hole12_par, response.data.hole13_par, response.data.hole14_par, response.data.hole15_par,
                 response.data.hole16_par, response.data.hole17_par, response.data.hole18_par
             ];
-            
+
             return { parValues };
         } catch (error) {
             console.error('Error fetching course data:', error);
@@ -70,7 +70,7 @@ const StatsPage = () => {
                     const response = await axios.get('http://localhost:3001/courses/coursesearch', {
                         params: { name: courseName }
                     });
-                    
+
                     const fetchedParValues = [
                         response.data.hole1_par, response.data.hole2_par, response.data.hole3_par, response.data.hole4_par, response.data.hole5_par,
                         response.data.hole6_par, response.data.hole7_par, response.data.hole8_par, response.data.hole9_par, response.data.hole10_par,
@@ -79,7 +79,7 @@ const StatsPage = () => {
                     ];
                     setParValues(fetchedParValues);
                 }
-            
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -143,30 +143,30 @@ const StatsPage = () => {
     return (
         <div className="mainContainer">
             <TopNavbar userEmail={userEmail} />
-            <div className='content-body'>
+            <div className='stats-content-body'>
                 <Container className="mt-4">
                     <h1>Stats Page</h1>
                     <Row>
                         <Col><p>Welcome to the Stats page! Here you can view your golf statistics and performance data.</p>
                         </Col>
-                    <Col className="text-center">
-                        <ToggleButtonGroup
-                            type="radio"
-                            name="viewMode"
-                            value={viewMode}
-                            onChange={val => setViewMode(val)}
-                        >
-                            <ToggleButton id="tbg-radio-1" value="all" className="greyscale-btn">
-                        All Games
-                    </ToggleButton>
-                    <ToggleButton id="tbg-radio-2" value="latest" className="greyscale-btn">
-                        Latest Game
-                    </ToggleButton>
-                        </ToggleButtonGroup>
-                    </Col>
+                        <Col className="text-center">
+                            <ToggleButtonGroup
+                                type="radio"
+                                name="viewMode"
+                                value={viewMode}
+                                onChange={val => setViewMode(val)}
+                            >
+                                <ToggleButton id="tbg-radio-1" value="all" className="greyscale-btn">
+                                    All Games
+                                </ToggleButton>
+                                <ToggleButton id="tbg-radio-2" value="latest" className="greyscale-btn">
+                                    Latest Game
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Col>
                     </Row>
-                    
-                    <br/><br/><br/>
+
+                    <br /><br /><br />
                     <Row>
                         <Col>
                             <h4>Average Putts Per Hole</h4>
@@ -181,7 +181,7 @@ const StatsPage = () => {
                             <h2>{greensHitPercentage}%</h2>
                         </Col>
                     </Row>
-                    <br/><br/><br/>
+                    <br /><br /><br />
                     <Row>
                         <Col>
                             <h3>Fairway Misses</h3>
@@ -192,17 +192,17 @@ const StatsPage = () => {
                             <Bar data={girReasonsData} options={{ responsive: true }} />
                         </Col>
                     </Row>
-                    <br/><br/><br/>
+                    <br /><br /><br />
                     <Row>
-                    {recentGame ? (
-                        <div>
-                            <h4>Most Recent Game - {courseName}</h4>
-                            {renderScoreCard(recentGame, parValues)}
-                            <br></br>
-                        </div>
-                    ) : (
-                        <p>Loading recent game data...</p>
-                    )}
+                        {recentGame ? (
+                            <div>
+                                <h4>Most Recent Game - {courseName}</h4>
+                                {renderScoreCard(recentGame, parValues)}
+                                <br></br>
+                            </div>
+                        ) : (
+                            <p>Loading recent game data...</p>
+                        )}
                     </Row>
                 </Container>
             </div>

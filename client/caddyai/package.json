@@ -32,7 +32,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start:frontend": "react-scripts start",
+    "start": "react-scripts start",
     "start:backend": "nodemon chatAPIserver.js",
     "build": "react-scripts build",
     "test": "react-scripts test",

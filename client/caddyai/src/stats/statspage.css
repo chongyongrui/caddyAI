@@ -1,0 +1,31 @@
+.greyscale-btn {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #666;
+    filter: grayscale(100%);
+}
+
+.greyscale-btn:hover,
+.greyscale-btn:focus,
+.greyscale-btn.active {
+    background-color: #d8d8d8;
+    color: #000;
+    border-color: #444;
+    filter: grayscale(50%);
+}
+
+.stats-content-body {
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    /* Offset for the fixed topbar */
+    height: calc(100vh - 100px);
+    /* Height minus topbar height */
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #202123;
+    color: #fff;
+    padding: 2vw;
+    box-sizing: border-box;
+    /* Ensure padding is considered in the height calculation */
+}

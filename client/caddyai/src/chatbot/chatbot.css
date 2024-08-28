@@ -14,12 +14,10 @@
     /* Align replies to the left */
 }
 
-
-
 .bottom-section {
     display: flex;
     flex-direction: column;
-    height: 55vh;
+    height: 80vh;
     /* Adjust height as needed */
     width: 100%;
     border-radius: 8px;
@@ -56,7 +54,7 @@
 
 /* Input styling */
 input {
-    width: 100%;
+    width: 95%;
     font-size: calc(1rem + 0.5vw);
     /* Fluid typography */
     border: none;
@@ -75,10 +73,12 @@ input:focus {
 /* Submit button styling */
 #submit {
     position: absolute;
-    bottom: 2vw;
+    bottom: 1vw;
     right: 0;
     margin-right: 10px;
     cursor: pointer;
+    color: white;
+    font-size: larger;
 }
 
 #submit:hover {
