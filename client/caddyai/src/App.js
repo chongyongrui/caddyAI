@@ -7,6 +7,7 @@ import Login from './utils/login.js'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)

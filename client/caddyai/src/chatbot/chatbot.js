@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './chatbot.css'; // Import the CSS file
 import ReactMarkdown from 'react-markdown';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import ShotPredictionForm from './shotpredictionform';
 
 const Chatbot = ({ email }) => { // Destructure email from props
     const [inputValue, setInputValue] = useState("");
@@ -16,10 +16,43 @@ const Chatbot = ({ email }) => { // Destructure email from props
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(MY_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const [showForm, setShowForm] = useState(false);
+
+    const [caddyFormData, setCaddyFormData] = useState(null);
+
+    const handleCaddyFormSubmit = async (data) => {
+        setCaddyFormData(data);
+        console.log('Form Data:', data);
+        // send query to AI LLM with custom promp
+        let customPrompt = data.lie;
+        const newMessage = { text: "What club to play for this shot?", type: 'sender' };
+        const updatedHistory = [...messageHistory, newMessage];
+        setMessageHistory(updatedHistory);
+
+        // Ensure inputValue is set before proceeding
+        setLoading(true);
+        const aiResponse = await clubSelectionAI(customPrompt);
+        const aiMessage = { text: aiResponse, type: 'reply' };
+        setMessageHistory([...updatedHistory, aiMessage]);
+        setLoading(false);
+        // Save the conversation data
+        await saveConversationData(inputValue, aiResponse);
+        
+    };
 
     const handleInputChange = (event) => {
-        setInputValue(event.target.value);
+        setInputValue();
     };
+    
+
+    const handleShowForm = () => {    
+        setShowForm(true);
+    };
+
+    const handleCloseForm = () => {
+        setShowForm(false);
+    };
+
 
     const saveConversationData = async (inputValue, response) => {
         if (!conversationID) {
@@ -85,6 +118,34 @@ const Chatbot = ({ email }) => { // Destructure email from props
         }
     };
 
+    const clubSelectionAI = async (prompt) => {
+        try {
+            const conversationHistory = messageHistory.map(msg => ({
+                role: msg.type === 'sender' ? 'user' : 'model',
+                parts: [{ text: msg.text }]
+            }));
+
+            // Initialize chat with history
+            const chat = model.startChat({
+                history: conversationHistory,
+                generationConfig: {
+                    maxOutputTokens: 100,
+                }
+            });
+            const result = await chat.sendMessageStream(prompt);
+            let responseText = '';
+
+            for await (const chunk of result.stream) {
+                responseText += chunk.text();
+            }
+
+            return responseText;
+        } catch (error) {
+            console.error("Error generating AI club selection response:", error);
+            return "Sorry, I couldn't process that. Please try again.";
+        }
+    };
+
     const handleSubmit = async () => {
         if (inputValue.trim() === '') return;
 
@@ -141,6 +202,8 @@ const Chatbot = ({ email }) => { // Destructure email from props
                 )}
             </div>
             <div className='input-container'>
+            <button className="open-form-button" onClick={handleShowForm}>Open Form</button>
+            {showForm && <ShotPredictionForm onClose={handleCloseForm} onSubmit={handleCaddyFormSubmit}/>}
                 <input
                     type='text'
                     value={inputValue}
