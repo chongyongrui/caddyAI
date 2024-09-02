@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import RoundsPage from './rounds/roundspage.js';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
@@ -23,6 +24,7 @@ function App() {
           />
           <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/stats" element={<StatsPage />} />
+          <Route path="/rounds" element={<RoundsPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

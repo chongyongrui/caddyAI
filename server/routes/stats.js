@@ -48,4 +48,31 @@ router.get('/recent-game', async (req, res) => {
     }
 });
 
+router.get('/gamehistory', async (req, res) => {
+    const email = req.query.email;
+    const courseName = req.query.courseName || null;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    try {
+        // Fetch data for the specified email and optional course name
+        let query = 'SELECT * FROM golfstats WHERE email = ?';
+        const queryParams = [email];
+
+        if (courseName) {
+            query += ' AND course = ?';
+            queryParams.push(courseName);
+        }
+
+        const [results] = await pool.query(query, queryParams);
+        res.json(results);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Error fetching data' });
+    }
+});
+
+
 module.exports = router;
