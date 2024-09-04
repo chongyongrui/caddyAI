@@ -40,7 +40,16 @@ const ScoreForm = ({ email }) => {
             .then((response) => response.json())
             .then((data) => setCourses(data))
             .catch((error) => console.error('Error fetching courses:', error));
+
+        if (email == null) {
+            notifyUnsuccessfulPost();
+        }
+
     }, []);
+
+    
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -141,7 +150,11 @@ const ScoreForm = ({ email }) => {
 
     const notifyUnsuccessfulPost = () => {
 
-        toast.warn('Error!', {
+        let errorText = "Error! ";
+        if (Text != null) {
+            errorText += Text;
+        }
+        toast.warn(errorText, {
             position: "top-center",
             autoClose: 3000,
             hideProgressBar: false,
@@ -451,7 +464,7 @@ const ScoreForm = ({ email }) => {
 
 
                         </Col>
-                        
+
                         {/* Error Message */}
                         {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
 
@@ -475,20 +488,20 @@ const ScoreForm = ({ email }) => {
 
                     </Row>
                     <Button
-                            variant={success ? "success" : "primary"}
-                            type="submit"
-                            style={{ borderColor: success ? "green" : "initial" }}
-                        >
-                            Submit
-                        </Button>
+                        variant={success ? "success" : "primary"}
+                        type="submit"
+                        style={{ borderColor: success ? "green" : "initial" }}
+                    >
+                        Submit
+                    </Button>
 
-                        <Button
-                            variant="danger"
-                            className="ms-2"
-                            onClick={handleEndGame}
-                        >
-                            End Game
-                        </Button>
+                    <Button
+                        variant="danger"
+                        className="ms-2"
+                        onClick={handleEndGame}
+                    >
+                        End Game
+                    </Button>
                 </Form>
             )}
 

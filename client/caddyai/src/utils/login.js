@@ -18,34 +18,36 @@ const Login = (props) => {
     setEmailError('');
     setPasswordError('');
     setLoginError('');
-
+  
     if (email === '') {
       setEmailError('Please enter your email');
       return;
     }
-
+  
     if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       setEmailError('Please enter a valid email');
       return;
     }
-
+  
     if (password === '') {
       setPasswordError('Please enter a password');
       return;
     }
-
+  
     if (password.length < 8) {
       setPasswordError('The password must be 8 characters or longer');
       return;
     }
-
+  
     try {
       const response = await axios.post('http://localhost:3001/auth/login', {
         email,
         password,
       });
-
+  
       localStorage.setItem('token', response.data.token);
+      props.setLoggedIn(true);
+      props.setEmail(email);
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
@@ -56,6 +58,7 @@ const Login = (props) => {
       }
     }
   };
+  
 
   const handleSignup = async () => {
     try {

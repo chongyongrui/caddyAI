@@ -3,75 +3,78 @@ import axios from 'axios';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import TopNavbar from '../utils/topnavbar';
 import './roundspage.css';
-import renderScoreCard from '../stats/scorecard';
+import Listofgames from './listofgames';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
-const RoundsPage = () => {
-    const [userEmail, setUserEmail] = useState('');
+const RoundsPage = ({ email }) => {
+    const navigate = useNavigate();
+
     const [gamesData, setGamesData] = useState([]);
-    const [selectedCourse, setSelectedCourse] = useState('All'); // Filter by course
-    const [parValuesCache, setParValuesCache] = useState({}); // Cache for par values to avoid redundant API calls
+    const [selectedCourse, setSelectedCourse] = useState('All');
+    const [userEmail, setUserEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
-    const fetchParValues = async (courseName) => {
+    const notifyUnsuccessfulPost = (message) => {
+        toast.warn(message, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
+    };
+
+    const fetchUserData = async (userEmail) => {
         try {
-            if (parValuesCache[courseName]) {
-                return parValuesCache[courseName];
-            }
-
-            const response = await axios.get('http://localhost:3001/courses/coursesearch', {
-                params: { name: courseName }
+            setIsLoading(true);
+            const gamesResponse = await axios.get('http://localhost:3001/stats/gamehistory', {
+                params: { email: userEmail }
             });
-
-            const fetchedParValues = [
-                response.data.hole1_par, response.data.hole2_par, response.data.hole3_par, response.data.hole4_par, response.data.hole5_par,
-                response.data.hole6_par, response.data.hole7_par, response.data.hole8_par, response.data.hole9_par, response.data.hole10_par,
-                response.data.hole11_par, response.data.hole12_par, response.data.hole13_par, response.data.hole14_par, response.data.hole15_par,
-                response.data.hole16_par, response.data.hole17_par, response.data.hole18_par
-            ];
-
-            setParValuesCache(prevCache => ({
-                ...prevCache,
-                [courseName]: fetchedParValues
-            }));
-
-            return fetchedParValues;
+            setGamesData(gamesResponse.data);
         } catch (error) {
-            console.error('Error fetching par values:', error);
-            return [];
+            console.error('Error fetching data:', error);
+            notifyUnsuccessfulPost("Error fetching game data. Please try again later.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                // Fetch the user's email
-                const userResponse = await axios.get('http://localhost:3001/auth/me', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                const email = userResponse.data.email;
-                setUserEmail(email);
+        if (!email) {
+            navigate('/login');
+            return;
+        }
 
-                // Fetch all games data
-                const gamesResponse = await axios.get('http://localhost:3001/stats/gamehistory', {
-                    params: { email }
-                });
-                setGamesData(gamesResponse.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
+        axios.get('http://localhost:3001/auth/me', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
             }
-        };
-
-        fetchUserData();
-    }, []);
+        })
+            .then(response => {
+                setUserEmail(response.data.email);
+                fetchUserData(response.data.email);
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+                notifyUnsuccessfulPost("Error getting user email. Please try logging in again.");
+            });
+    }, [email, navigate]);
 
     const handleCourseFilterChange = (course) => {
         setSelectedCourse(course);
     };
 
-    // Filter games based on selected course
-    //const filteredGames = gamesData.filter(game => selectedCourse === 'All' || game.course === selectedCourse);
-    //const courses = [...new Set(gamesData.map(game => game.course))]; // Get unique courses
+    const filteredGames = gamesData.filter(game => selectedCourse === 'All' || game.course === selectedCourse);
+    const courses = [...new Set(gamesData.map(game => game.course))];
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="mainContainer">
@@ -83,13 +86,11 @@ const RoundsPage = () => {
                         <Col>
                             <p>Welcome to the Stats page! Here you can view your golf statistics and performance data.</p>
                         </Col>
-
                         <Col>
                             <Dropdown onSelect={handleCourseFilterChange}>
                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                                     {selectedCourse}
                                 </Dropdown.Toggle>
-
                                 <Dropdown.Menu>
                                     <Dropdown.Item eventKey="All">All Courses</Dropdown.Item>
                                     {courses.map(course => (
@@ -100,32 +101,12 @@ const RoundsPage = () => {
                         </Col>
                     </Row>
                     <br /><br /><br />
-                    {filteredGames.map((game, index) => (
-                        <div key={index}>
-                            <h4>{game.course} on {new Date(game.dateTime).toLocaleDateString()}</h4>
-                            <GameScoreCard game={game} fetchParValues={fetchParValues} />
-                            <br />
-                        </div>
-                    ))}
+                    <Listofgames games={filteredGames} userEmail={userEmail} />
                 </Container>
             </div>
+            <ToastContainer />
         </div>
     );
-};
-
-const GameScoreCard = ({ game, fetchParValues }) => {
-    const [parValues, setParValues] = useState([]);
-
-    useEffect(() => {
-        const fetchAndSetParValues = async () => {
-            const fetchedParValues = await fetchParValues(game.course);
-            setParValues(fetchedParValues);
-        };
-
-        fetchAndSetParValues();
-    }, [game.course, fetchParValues]);
-
-    return renderScoreCard(game, parValues);
 };
 
 export default RoundsPage;

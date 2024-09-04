@@ -1,0 +1,17 @@
+/* Style for the scorecard table */
+.scorecard-table {
+    background-color: rgba(0321, 0, 0, 0.5); /* Translucent background */
+    color: rgb(5, 5, 5); /* White text */
+    border-color: white; /* White border lines */
+}
+
+/* Style for table headers and cells */
+.scorecard-table th, .scorecard-table td {
+    color: rgb(31, 28, 28); /* White text */
+    border: 1px solid rgb(70, 64, 64); /* White border lines */
+}
+
+/* Additional styling for score cells */
+.scorecard-table td {
+    text-align: center;
+}

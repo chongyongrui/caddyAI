@@ -1,30 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
-import './scorecard.css';
+import axios from 'axios';
+import './gamecard.css';
 
-const calculateHoleScore = (game, parValue) => {
-    const fairwayHit = game.fairwayHit ? 1 : 0;
-    const gir = game.gir ? 1 : 0;
-    return (1 - fairwayHit) + (1 - gir) + game.putts - 2 + parValue;
-};
+const GameCard = ({ game }) => {
+    const [parValues, setParValues] = useState([]);
 
-const RenderScoreCard = (games, parValues) => {
-    let holes = Array.from({ length: 18 }, (_, index) => index + 1);
-    let scores = holes.map(hole => {
-        const game = games.find(g => g.hole === hole);
-        return {
-            hole,
-            score: game ? calculateHoleScore(game, parValues[hole - 1]) : 0,
-            par: parValues[hole - 1]
+    useEffect(() => {
+        const fetchParValues = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/courses/coursesearch', {
+                    params: { name: game.course }
+                });
+
+                const parValues = [
+                    response.data.hole1_par, response.data.hole2_par, response.data.hole3_par, response.data.hole4_par, response.data.hole5_par,
+                    response.data.hole6_par, response.data.hole7_par, response.data.hole8_par, response.data.hole9_par, response.data.hole10_par,
+                    response.data.hole11_par, response.data.hole12_par, response.data.hole13_par, response.data.hole14_par, response.data.hole15_par,
+                    response.data.hole16_par, response.data.hole17_par, response.data.hole18_par
+                ];
+
+                setParValues(parValues);
+            } catch (error) {
+                console.error('Error fetching course data:', error);
+            }
         };
-    });
 
-    let row1 = scores.slice(0, 9).map(score => score.hole);
-    let row2 = scores.slice(0, 9).map(score => score.par);
-    let row3 = scores.slice(0, 9).map(score => score.score);
-    let row4 = scores.slice(9, 18).map(score => score.hole);
-    let row5 = scores.slice(9, 18).map(score => score.par);
-    let row6 = scores.slice(9, 18).map(score => score.score);
+        fetchParValues();
+    }, [game.course]);
+
+    if (parValues.length === 0) {
+        return <div>Loading...</div>;  // Optionally show a loading message while fetching data
+    }
+
+    const holes = Array.from({ length: 18 }, (_, index) => index + 1);
+    const jsonObject = JSON.parse(game.scores);
+    const scorearray = Object.values(jsonObject);
+
+    const scores = holes.map(hole => ({
+        hole,
+        score: scorearray[hole - 1],  // Fetch the score for each hole from game.scores
+        par: parValues[hole - 1]
+    }));
+
+    const row1 = scores.slice(0, 9).map(score => score.hole);
+    const row2 = scores.slice(0, 9).map(score => score.par);
+    const row3 = scores.slice(0, 9).map(score => score.score);
+    const row4 = scores.slice(9, 18).map(score => score.hole);
+    const row5 = scores.slice(9, 18).map(score => score.par);
+    const row6 = scores.slice(9, 18).map(score => score.score);
 
     const getStyleForScore = (score, par) => {
         if (score <= par - 1) {
@@ -46,7 +70,7 @@ const RenderScoreCard = (games, parValues) => {
     return (
         <Table bordered className="scorecard-table">
             <thead>
-                <tr >
+                <tr>
                     <th style={{ backgroundColor: 'lightgrey' }}></th>
                     {row1.map(hole => (
                         <th key={hole} style={{ textAlign: 'center', backgroundColor: 'lightgrey' }}>Hole {hole}</th>
@@ -93,4 +117,4 @@ const RenderScoreCard = (games, parValues) => {
     );
 };
 
-export default RenderScoreCard;
+export default GameCard;

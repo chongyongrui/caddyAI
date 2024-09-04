@@ -1,5 +1,3 @@
-// src/LandingPage.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,40 +7,45 @@ import TopNavbar from '../utils/topnavbar'; // Import the new TopNavbar componen
 import Chatbot from '../chatbot/chatbot';
 import "./landingpage.css";
 
-const LandingPage = () => {
+const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
     const [listOfPosts, setListOfPosts] = useState([]);
     const [userEmail, setUserEmail] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
+        // Redirect to login if not logged in
+        if (!loggedIn) {
+            navigate('/login');
+            return;  // Ensure the rest of the useEffect doesn't run if not logged in
+        }
+
         // Fetch the user's email
         axios.get('http://localhost:3001/auth/me', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-            .then(response => {
-                setUserEmail(response.data.email);
-            })
-            .catch(error => {
-                console.error('Error fetching user email:', error);
-            });
+        .then(response => {
+            setUserEmail(response.data.email);
+        })
+        .catch(error => {
+            console.error('Error fetching user email:', error);
+        });
 
+        // Fetch the list of posts (scores)
         axios.get('http://localhost:3001/postscore') // Adjusted endpoint to match the backend route
-            .then((response) => {
-                console.log(response.data);
-                setListOfPosts(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    }, []);
+        .then((response) => {
+            console.log(response.data);
+            setListOfPosts(response.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+    }, [loggedIn, navigate]);
 
     return (
         <div className="mainContainer">
-
             <TopNavbar userEmail={userEmail} className='top-navbar-custom ' />
-
-
             <div className='content-body'>
                 <Container fluid>
                     <section className='main'>
@@ -61,15 +64,12 @@ const LandingPage = () => {
                                 </Row>
                                 <div></div> <div></div> <div></div>
                                 <Row>
-
                                     <Tab.Content>
                                         <Tab.Pane eventKey="caddy">
-
                                             <Chatbot email={userEmail} />
                                         </Tab.Pane>
                                         <Tab.Pane eventKey="scorecard">
                                             <Row className="bottom-section">
-
                                                 <Col className="right-col">
                                                     <FormComponent email={userEmail} />
                                                 </Col>
@@ -77,7 +77,6 @@ const LandingPage = () => {
                                         </Tab.Pane>
                                     </Tab.Content>
                                 </Row>
-
                             </div>
                         </Tab.Container>
                     </section>

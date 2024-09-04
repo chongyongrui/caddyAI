@@ -23,8 +23,8 @@ function App() {
             element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
           />
           <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-          <Route path="/stats" element={<StatsPage />} />
-          <Route path="/rounds" element={<RoundsPage />} />
+          <Route path="/stats" element={<StatsPage email={email} />} />
+          <Route path="/rounds" element={<RoundsPage email={email} />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />
