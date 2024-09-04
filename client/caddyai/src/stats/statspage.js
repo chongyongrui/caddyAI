@@ -6,16 +6,18 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import './statspage.css';
 import renderScoreCard from './scorecard';
+import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
-const StatsPage = () => {
+const StatsPage = ({ email }) => {
     const [userEmail, setUserEmail] = useState('');
     const [statsData, setStatsData] = useState(null);
     const [recentGame, setRecentGame] = useState(null);
     const [courseName, setCourseName] = useState('');
     const [parValues, setParValues] = useState([]);
     const [viewMode, setViewMode] = useState('all'); // New state for toggle
+    const navigate = useNavigate();
 
     const fetchParValues = async (courseName) => {
         try {
@@ -38,6 +40,10 @@ const StatsPage = () => {
     };
 
     useEffect(() => {
+        if (!email) {
+            navigate('/login');
+        }
+
         const fetchUserData = async () => {
             try {
                 // Fetch the user's email
@@ -138,7 +144,7 @@ const StatsPage = () => {
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1,
         }],
-    };
+    }
 
     return (
         <div className="mainContainer">
