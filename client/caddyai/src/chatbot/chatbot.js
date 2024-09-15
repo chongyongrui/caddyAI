@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import './chatbot.css'; // Import the CSS file
 import ReactMarkdown from 'react-markdown';
 import ShotPredictionForm from './shotpredictionform';
+import {GOLF_SP, CADDY_FORM} from './prompts.js';
 
 const Chatbot = ({ email }) => { // Destructure email from props
     const [inputValue, setInputValue] = useState("");
@@ -20,18 +21,45 @@ const Chatbot = ({ email }) => { // Destructure email from props
 
     const [caddyFormData, setCaddyFormData] = useState(null);
 
+
+    const parseCaddyShotData = (data) => {
+        let  finalPrompt = GOLF_SP;
+        let distance = data.distance;
+        let surface = data.surface;
+        let slope = data.slope;
+        let wind = ""
+        switch (data.wind) {
+            case "→": 
+            case "←":
+                wind = "right to left";
+            case "↓":
+                wind = "headwind";
+            case "↑":
+                wind = "tailwind";
+            default:
+                wind = "negligible"
+        }
+
+        finalPrompt += CADDY_FORM;
+        finalPrompt += "The distance to hole is ${distance}. The ball is sitting in/on ${surface}. The golf hole is ${slope}. The wind is ${wind}. "
+        console.log("final prompt to send to api is " + finalPrompt)
+        return finalPrompt
+    }
+
+
     const handleCaddyFormSubmit = async (data) => {
         setCaddyFormData(data);
         console.log('Form Data:', data);
-        // send query to AI LLM with custom promp
-        let customPrompt = data.lie;
+        //parse data 
+        let finalPrompt = parseCaddyShotData(data);
+
         const newMessage = { text: "What club to play for this shot?", type: 'sender' };
         const updatedHistory = [...messageHistory, newMessage];
         setMessageHistory(updatedHistory);
-
+        
         // Ensure inputValue is set before proceeding
         setLoading(true);
-        const aiResponse = await clubSelectionAI(customPrompt);
+        const aiResponse = await clubSelectionAI(finalPrompt);
         const aiMessage = { text: aiResponse, type: 'reply' };
         setMessageHistory([...updatedHistory, aiMessage]);
         setLoading(false);
@@ -41,8 +69,8 @@ const Chatbot = ({ email }) => { // Destructure email from props
     };
 
     const handleInputChange = (event) => {
-        setInputValue();
-    };
+        setInputValue(event.target.value);
+    }
     
 
     const handleShowForm = () => {    
@@ -201,7 +229,6 @@ const Chatbot = ({ email }) => { // Destructure email from props
                     </div>
                 )}
             </div>
-            <div className='input-container'>
             <button className="open-form-button" onClick={handleShowForm}>Open Form</button>
             {showForm && <ShotPredictionForm onClose={handleCloseForm} onSubmit={handleCaddyFormSubmit}/>}
                 <input
@@ -210,6 +237,8 @@ const Chatbot = ({ email }) => { // Destructure email from props
                     onChange={handleInputChange}
                     placeholder='Type your message...'
                 />
+            <div className='input-container'>
+            
                 <div id='submit' onClick={handleSubmit}>
                     Go ⏎
                 </div>

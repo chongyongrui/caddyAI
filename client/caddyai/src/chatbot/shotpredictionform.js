@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Form, Button, Container, Row, Col, Modal, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import './shotpredictionform.css';
 
 const ShotPredictionForm = ({ onClose, onSubmit }) => {
@@ -7,12 +8,15 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
   const [selectedSlope, setSelectedSlope] = useState(null);
   const [selectedWind, setSelectedWind] = useState(null);
   const [selectedLie, setSelectedLie] = useState(null);
+  const [selectedDistance, setSelectedDistance] = useState(150)
+  
 
   const scrollContainerRef = useRef(null);
 
+  const distance = 150;
   const surface = ['Fairway', 'Rough', 'Thick Rough', 'Sand', 'Dirt'];
   const slope = ['Uphill', 'Downhill', 'Flat'];
-  const wind = ['→', '←', '↑', '↓'];
+  const wind = ['→', '←', '↑', '↓', 'negligible'];
   const lie = ['flat', 'slope right', 'slope left', 'slope back', 'slope forward'];
 
   // Scroll into view when an option is selected
@@ -50,6 +54,7 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const selectedChoices = {
+      distance: distance[selectedDistance],
       surface: surface[selectedSurface],
       slope: slope[selectedSlope],
       wind: wind[selectedWind],
@@ -64,6 +69,24 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
       <div className="form-container">
         <button className="close-button" onClick={onClose}>X</button>
         <form onSubmit={handleSubmit} className="horizontal-scroll-form">
+          <h4> Distance (m)</h4><br/>
+          <div className="d-flex align-items-center">
+              <Button
+                  variant="outline-secondary"
+                  onClick={() => setSelectedDistance(selectedDistance > 20 ? selectedDistance - 10 : 20)}
+              >
+                  -
+              </Button>
+              <span className="mx-3">{selectedDistance}</span>
+              <Button
+                  variant="outline-secondary"
+                  onClick={() => setSelectedDistance(selectedDistance < 300 ? selectedDistance + 10 : 300)}
+              >
+                  +
+              </Button>
+          </div>
+          <br></br>
+          <h4>Surface</h4>
           <div className="scroll-container" ref={scrollContainerRef}>
             {surface.map((option, index) => (
               <div
@@ -75,6 +98,8 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
               </div>
             ))}
           </div>
+          <br></br>
+          <h4>Pin Elevation</h4>
           <div className="scroll-container" ref={scrollContainerRef}>
             {slope.map((option, index) => (
               <div
@@ -86,6 +111,8 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
               </div>
             ))}
           </div>
+          <br></br>
+          <h4> Wind </h4>
           <div className="scroll-container" ref={scrollContainerRef}>
             {wind.map((option, index) => (
               <div
@@ -97,6 +124,8 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
               </div>
             ))}
           </div>
+          <br></br>
+          <h4> Lie</h4>
           <div className="scroll-container" ref={scrollContainerRef}>
             {lie.map((option, index) => (
               <div
