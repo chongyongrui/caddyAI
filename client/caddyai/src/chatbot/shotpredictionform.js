@@ -1,66 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Button, Container, Row, Col, Modal, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import './shotpredictionform.css';
 
-const ShotPredictionForm = ({ onClose, onSubmit }) => {
-  // Separate state for each category
+const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const [selectedSurface, setSelectedSurface] = useState(null);
   const [selectedSlope, setSelectedSlope] = useState(null);
   const [selectedWind, setSelectedWind] = useState(null);
   const [selectedLie, setSelectedLie] = useState(null);
-  const [selectedDistance, setSelectedDistance] = useState(150)
-  
+  const [selectedDistance, setSelectedDistance] = useState(150);
+  const [feedbackOption, setFeedbackOption] = useState('Yes'); // For feedback-specific option
 
-  const scrollContainerRef = useRef(null);
-
-  const distance = 150;
   const surface = ['Fairway', 'Rough', 'Thick Rough', 'Sand', 'Dirt'];
   const slope = ['Uphill', 'Downhill', 'Flat'];
   const wind = ['→', '←', '↑', '↓', 'negligible'];
   const lie = ['flat', 'slope right', 'slope left', 'slope back', 'slope forward'];
 
-  // Scroll into view when an option is selected
-  const scrollToSelected = (index) => {
-    if (scrollContainerRef.current) {
-      const selectedElement = scrollContainerRef.current.children[index];
-      const containerWidth = scrollContainerRef.current.clientWidth;
-      const elementWidth = selectedElement.clientWidth;
-      const elementLeft = selectedElement.offsetLeft;
-
-      const scrollLeft = elementLeft - (containerWidth / 2 - elementWidth / 2);
-      scrollContainerRef.current.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (selectedSurface !== null) scrollToSelected(selectedSurface);
-  }, [selectedSurface]);
-
-  useEffect(() => {
-    if (selectedSlope !== null) scrollToSelected(selectedSlope);
-  }, [selectedSlope]);
-
-  useEffect(() => {
-    if (selectedWind !== null) scrollToSelected(selectedWind);
-  }, [selectedWind]);
-
-  useEffect(() => {
-    if (selectedLie !== null) scrollToSelected(selectedLie);
-  }, [selectedLie]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const selectedChoices = {
-      distance: distance[selectedDistance],
+      distance: selectedDistance,
       surface: surface[selectedSurface],
       slope: slope[selectedSlope],
       wind: wind[selectedWind],
       lie: lie[selectedLie],
     };
-    onSubmit(selectedChoices); // Pass the selected choices to the parent component
+
+    if (isFeedback) {
+      selectedChoices.feedbackOption = feedbackOption;
+      // Submit to the feedback DB table
+      console.log("Submitting feedback data", selectedChoices);
+      // You would send this data to your feedback DB table here
+    } else {
+      // Submit to the regular DB table
+      console.log("Submitting shot prediction data", selectedChoices);
+      // You would send this data to your prediction DB table here
+    }
+
+    onSubmit(selectedChoices);
     onClose();
   };
 
@@ -71,23 +47,23 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
         <form onSubmit={handleSubmit} className="horizontal-scroll-form">
           <h4> Distance (m)</h4><br/>
           <div className="d-flex align-items-center">
-              <Button
-                  variant="outline-secondary"
-                  onClick={() => setSelectedDistance(selectedDistance > 20 ? selectedDistance - 10 : 20)}
-              >
-                  -
-              </Button>
-              <span className="mx-3">{selectedDistance}</span>
-              <Button
-                  variant="outline-secondary"
-                  onClick={() => setSelectedDistance(selectedDistance < 300 ? selectedDistance + 10 : 300)}
-              >
-                  +
-              </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setSelectedDistance(selectedDistance > 20 ? selectedDistance - 10 : 20)}
+            >
+              -
+            </Button>
+            <span className="mx-3">{selectedDistance}</span>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setSelectedDistance(selectedDistance < 300 ? selectedDistance + 10 : 300)}
+            >
+              +
+            </Button>
           </div>
           <br></br>
           <h4>Surface</h4>
-          <div className="scroll-container" ref={scrollContainerRef}>
+          <div className="scroll-container">
             {surface.map((option, index) => (
               <div
                 key={index}
@@ -100,7 +76,7 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
           </div>
           <br></br>
           <h4>Pin Elevation</h4>
-          <div className="scroll-container" ref={scrollContainerRef}>
+          <div className="scroll-container">
             {slope.map((option, index) => (
               <div
                 key={index}
@@ -112,8 +88,8 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
             ))}
           </div>
           <br></br>
-          <h4> Wind </h4>
-          <div className="scroll-container" ref={scrollContainerRef}>
+          <h4>Wind</h4>
+          <div className="scroll-container">
             {wind.map((option, index) => (
               <div
                 key={index}
@@ -125,8 +101,8 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
             ))}
           </div>
           <br></br>
-          <h4> Lie</h4>
-          <div className="scroll-container" ref={scrollContainerRef}>
+          <h4>Lie</h4>
+          <div className="scroll-container">
             {lie.map((option, index) => (
               <div
                 key={index}
@@ -137,7 +113,36 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
               </div>
             ))}
           </div>
-          <button type="submit" disabled={selectedSurface === null || selectedSlope === null || selectedWind === null || selectedLie === null}>Submit</button>
+          <br></br>
+
+          {isFeedback && (
+            <>
+              <h4>Is Feedback?</h4>
+              <div>
+                <Form.Check
+                  inline
+                  label="Yes"
+                  type="radio"
+                  checked={feedbackOption === 'Yes'}
+                  onChange={() => setFeedbackOption('Yes')}
+                />
+                <Form.Check
+                  inline
+                  label="No"
+                  type="radio"
+                  checked={feedbackOption === 'No'}
+                  onChange={() => setFeedbackOption('No')}
+                />
+              </div>
+            </>
+          )}
+
+          <button
+            type="submit"
+            disabled={selectedSurface === null || selectedSlope === null || selectedWind === null || selectedLie === null}
+          >
+            Submit
+          </button>
         </form>
       </div>
     </div>
