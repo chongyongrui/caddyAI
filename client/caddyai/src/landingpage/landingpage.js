@@ -3,9 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
 import FormComponent from '../stats/ScoreForm'; // Assume you import your form component
-import TopNavbar from '../utils/topnavbar'; // Import the new TopNavbar component
-import Chatbot from '../chatbot/chatbot';
-import "./landingpage.css";
+import TopNavbar from '../utils/TopNavBar.js'; // Import the new TopNavbar component
+import Chatbot from '../chatbot/Chatbot.js';
+import "./LandingPage.css";
 
 const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
     const [listOfPosts, setListOfPosts] = useState([]);

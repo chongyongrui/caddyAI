@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import './shotpredictionform.css';
+import './ShotFeedbackForm.css';
 
 const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const [selectedSurface, setSelectedSurface] = useState(null);
@@ -56,7 +56,7 @@ const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const selectedChoices = {
-      distance: selectedDistance, // Use the selectedDistance directly
+      distance: selectedDistance, 
       surface: surface[selectedSurface],
       slope: slope[selectedSlope],
       wind: wind[selectedWind],
@@ -65,13 +65,9 @@ const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
 
     if (isFeedback) {
       selectedChoices.feedbackOption = feedbackOption;
-      // Submit to the feedback DB table
       console.log("Submitting feedback data", selectedChoices);
-      // You would send this data to your feedback DB table here
     } else {
-      // Submit to the regular DB table
       console.log("Submitting shot prediction data", selectedChoices);
-      // You would send this data to your prediction DB table here
     }
 
     onSubmit(selectedChoices);

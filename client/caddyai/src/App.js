@@ -1,14 +1,14 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import LandingPage from './landingpage/landingpage.js'
-import StatsPage from './stats/statspage.js';
-import Login from './utils/login.js'
+import LandingPage from './landingpage/LandingPage.js'
+import StatsPage from './stats/StatsPage.js';
+import Login from './utils/Login.js'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import RoundsPage from './rounds/roundspage.js';
+import RoundsPage from './rounds/RoundsPage.js';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
