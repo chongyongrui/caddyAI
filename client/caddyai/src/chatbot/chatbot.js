@@ -29,7 +29,7 @@ const Chatbot = ({ email }) => {
 
 
 
-        const CADDY_FORM = 'I want to hit the ball for my next shot. Please advice whether i should club up or down, or hit my usual club for this distance. Also tell me if i should aim left, right or usual. Give a short and consice explanation too. Here are the details of the situation: '
+    const CADDY_FORM = 'I want to hit the ball for my next shot. Please advice whether i should club up or down, or hit my usual club for this distance. Also tell me if i should aim left, right or usual. Give a short and consice explanation too. Here are the details of the situation: '
 
 
     const parseCaddyShotData = (data) => {
