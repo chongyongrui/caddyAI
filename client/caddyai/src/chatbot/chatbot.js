@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import './chatbot.css'; // Import the CSS file
 import ReactMarkdown from 'react-markdown';
 import ShotPredictionForm from './shotpredictionform';
-import {GOLF_SP, CADDY_FORM} from './prompts.js';
 
 const Chatbot = ({ email }) => { // Destructure email from props
     const [inputValue, setInputValue] = useState("");
@@ -21,31 +20,45 @@ const Chatbot = ({ email }) => { // Destructure email from props
 
     const [caddyFormData, setCaddyFormData] = useState(null);
 
+    const GOLF_SP = "You are a highly knowledgeable and experienced golf caddy, with a deep understanding of golf strategy, club selection, and course management. Your role is to provide precise and strategic recommendations for club selection based on various factors such as the ball's lie, wind conditions, slope, distance to the hole, and the specific characteristics of the course. When giving advice: Always consider the player's skill level and any potential risks. Prioritize accuracy and consistency over aggressive play unless the situation calls for it. Provide a brief explanation for your recommendations to help the player understand the reasoning behind your choices. When uncertain, suggest a safe option that minimizes risk. You are here to help the player make the best possible decisions to improve their game and lower their score. Always try to keep the response short, concise and to the point with minimal explanation. When shot history data is provided, be as mathematical and statistical, taking more emphasis on more recent golf shots to make a better suggestion. For promts not related to golf, reply that you are not able to help. This is the user's prompt: "
+
+
+
+        const CADDY_FORM = 'I want to hit the ball for my next shot. Please advice whether i should club up or down, or hit my usual club for this distance. Also tell me if i should aim left, right or usual. Give a short and consice explanation too. Here are the details of the situation: '
+
 
     const parseCaddyShotData = (data) => {
-        let  finalPrompt = GOLF_SP;
+        let finalPrompt = GOLF_SP;
         let distance = data.distance;
         let surface = data.surface;
         let slope = data.slope;
-        let wind = ""
+        let wind = "";
+    
         switch (data.wind) {
             case "→": 
+                wind = "left to right";
+                break;
             case "←":
                 wind = "right to left";
+                break;
             case "↓":
                 wind = "headwind";
+                break;
             case "↑":
                 wind = "tailwind";
+                break;
             default:
-                wind = "negligible"
+                wind = "negligible";
         }
-
-        finalPrompt += CADDY_FORM;
-        finalPrompt += "The distance to hole is ${distance}. The ball is sitting in/on ${surface}. The golf hole is ${slope}. The wind is ${wind}. "
-        console.log("final prompt to send to api is " + finalPrompt)
-        return finalPrompt
-    }
-
+    
+        finalPrompt += `${CADDY_FORM} The distance to the hole is ${distance}. The ball is sitting in/on ${surface}. The slope of the course is ${slope}. The wind is ${wind}.`;
+    
+        console.log("final prompt to send to API is: " + finalPrompt);
+        return finalPrompt;
+    };
+    
+    
+    
 
     const handleCaddyFormSubmit = async (data) => {
         setCaddyFormData(data);
@@ -64,7 +77,7 @@ const Chatbot = ({ email }) => { // Destructure email from props
         setMessageHistory([...updatedHistory, aiMessage]);
         setLoading(false);
         // Save the conversation data
-        await saveConversationData(inputValue, aiResponse);
+        await saveConversationData(finalPrompt, aiResponse);
         
     };
 
@@ -83,19 +96,23 @@ const Chatbot = ({ email }) => { // Destructure email from props
 
 
     const saveConversationData = async (inputValue, response) => {
-        if (!conversationID) {
-            setConversationId(uuidv4());
+        let convID = conversationID;
+        
+        // Generate a new conversation ID if it’s null
+        if (convID == null) {
+            convID = uuidv4();
+            setConversationId(convID); // Set it in state
         }
-
+    
         const formData = {
             datetime: new Date().toISOString().slice(0, 19).replace('T', ' '),
             userid: -1, // Placeholder for User ID
             userEmail: email,
-            conversationId: conversationID,
+            conversationId: convID, // Use the locally defined convID
             prompt: inputValue,
             response: response
         };
-
+    
         try {
             const res = await fetch('http://localhost:3001/chatresponses', {
                 method: 'POST',
@@ -104,11 +121,11 @@ const Chatbot = ({ email }) => { // Destructure email from props
                 },
                 body: JSON.stringify(formData),
             });
-
+    
             if (!res.ok) {
                 throw new Error(`HTTP error! Status: ${res.status}`);
             }
-
+    
             const data = await res.json();
             console.log('Conversation saved:', data);
         } catch (error) {
@@ -127,7 +144,7 @@ const Chatbot = ({ email }) => { // Destructure email from props
             const chat = model.startChat({
                 history: conversationHistory,
                 generationConfig: {
-                    maxOutputTokens: 100,
+                  //  maxOutputTokens: 1000,
                 }
             });
 
