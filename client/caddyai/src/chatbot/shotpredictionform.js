@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import './shotpredictionform.css';
 
-const ShotPredictionForm = ({ onClose, onSubmit }) => {
+const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const [selectedSurface, setSelectedSurface] = useState(null);
   const [selectedSlope, setSelectedSlope] = useState(null);
   const [selectedWind, setSelectedWind] = useState(null);
@@ -13,6 +13,8 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
   const slopeRef = useRef(null);
   const windRef = useRef(null);
   const lieRef = useRef(null);
+
+  const [feedbackOption, setFeedbackOption] = useState('Yes'); // For feedback-specific option
 
   const surface = ['Fairway', 'Rough', 'Thick Rough', 'Sand', 'Dirt'];
   const slope = ['Uphill', 'Downhill', 'Flat'];
@@ -60,7 +62,19 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
       wind: wind[selectedWind],
       lie: lie[selectedLie],
     };
-    onSubmit(selectedChoices); // Pass the selected choices to the parent component
+
+    if (isFeedback) {
+      selectedChoices.feedbackOption = feedbackOption;
+      // Submit to the feedback DB table
+      console.log("Submitting feedback data", selectedChoices);
+      // You would send this data to your feedback DB table here
+    } else {
+      // Submit to the regular DB table
+      console.log("Submitting shot prediction data", selectedChoices);
+      // You would send this data to your prediction DB table here
+    }
+
+    onSubmit(selectedChoices);
     onClose();
   };
 
@@ -137,7 +151,36 @@ const ShotPredictionForm = ({ onClose, onSubmit }) => {
               </div>
             ))}
           </div>
-          <button type="submit" disabled={selectedSurface === null || selectedSlope === null || selectedWind === null || selectedLie === null}>Submit</button>
+          <br></br>
+
+          {isFeedback && (
+            <>
+              <h4>Is Feedback?</h4>
+              <div>
+                <Form.Check
+                  inline
+                  label="Yes"
+                  type="radio"
+                  checked={feedbackOption === 'Yes'}
+                  onChange={() => setFeedbackOption('Yes')}
+                />
+                <Form.Check
+                  inline
+                  label="No"
+                  type="radio"
+                  checked={feedbackOption === 'No'}
+                  onChange={() => setFeedbackOption('No')}
+                />
+              </div>
+            </>
+          )}
+
+          <button
+            type="submit"
+            disabled={selectedSurface === null || selectedSlope === null || selectedWind === null || selectedLie === null}
+          >
+            Submit
+          </button>
         </form>
       </div>
     </div>
