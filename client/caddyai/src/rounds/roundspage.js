@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
-import TopNavbar from '../utils/TopNavBar';
-import './RoundsPage.css';
-import Listofgames from './ListOfGames';
+import TopNavbar from '../utils/topnavbar';
+import './roundspage.css';
+import Listofgames from './listofgames';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';

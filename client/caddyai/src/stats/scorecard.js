@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import './ScoreCard.css';
+import './scorecard.css';
 
 const calculateHoleScore = (game, parValue) => {
     const fairwayHit = game.fairwayHit ? 1 : 0;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import axios from 'axios';
-import GameCard from './GameCard';
+import GameCard from './gamecard';
 
 
 const ListOfGames = ({ games, userEmail }) => {

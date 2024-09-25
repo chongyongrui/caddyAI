@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Table, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-import TopNavbar from '../utils/TopNavBar';
+import TopNavbar from '../utils/topnavbar';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
-import './StatsPage.css';
-import renderScoreCard from './ScoreCard';
+import './statspage.css';
+import renderScoreCard from './scorecard';
 import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
-import './Login.css';  // Import the CSS file
+import './login.css';  // Import the CSS file
 
 const Login = (props) => {
   const [email, setEmail] = useState('');
