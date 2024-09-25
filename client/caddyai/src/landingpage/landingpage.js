@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
-import FormComponent from '../stats/ScoreForm'; // Assume you import your form component
-import TopNavbar from '../utils/TopNavBar'; // Import the new TopNavbar component
+import FormComponent from '../stats/ScoreForm';
+import TopNavbar from '../utils/TopNavBar';
 import Chatbot from '../chatbot/Chatbot.js';
 import "./LandingPage.css";
+
+const { oneHotEncode } = require('../KNNClassifier/Encoder.js');
+
 
 const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
     const [listOfPosts, setListOfPosts] = useState([]);
@@ -16,10 +19,9 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
         // Redirect to login if not logged in
         if (!loggedIn) {
             navigate('/login');
-            return;  // Ensure the rest of the useEffect doesn't run if not logged in
+            return;
         }
 
-        // Fetch the user's email
         axios.get('http://localhost:3001/auth/me', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -32,16 +34,21 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
                 console.error('Error fetching user email:', error);
             });
 
-        // Fetch the list of posts (scores)
-        axios.get('http://localhost:3001/postscore') // Adjusted endpoint to match the backend route
+        axios.get('http://localhost:3001/shotfeedback/getlast1000', {
+            params: { email: userEmail }
+        })
             .then((response) => {
-                console.log(response.data);
-                setListOfPosts(response.data);
+                const shotData = response.data;
+                console.log(shotData);
+                // const encodedData = oneHotEncode(shotData);
+                localStorage.setItem('encodedShotData', JSON.stringify(shotData));
+                setListOfPosts(shotData);
             })
             .catch((error) => {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching shot history data:', error);
             });
-    }, [loggedIn, navigate]);
+    }, [loggedIn, navigate, userEmail]);
+    const encodedShotData = JSON.parse(localStorage.getItem('encodedShotData'));
 
     return (
         <div className="mainContainer">
@@ -66,7 +73,7 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
                                 <Row>
                                     <Tab.Content>
                                         <Tab.Pane eventKey="caddy">
-                                            <Chatbot email={userEmail} />
+                                            <Chatbot email={userEmail} encodedShotData={encodedShotData} />
                                         </Tab.Pane>
                                         <Tab.Pane eventKey="scorecard">
                                             <Row className="bottom-section">

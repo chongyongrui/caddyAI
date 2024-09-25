@@ -21,4 +21,21 @@ router.post('/post', async (req, res) => {
     }
 });
 
+router.get('/getlast1000', async (req, res) => {
+    const { email } = req.query; 
+
+    try {
+        const [results] = await pool.query(
+            'SELECT * FROM shothistory WHERE email = ? ORDER BY datetimenow DESC LIMIT 1000', 
+            [email]
+        );
+
+        res.json(results);
+    } catch (err) {
+        console.error('Error fetching shot data:', err);
+        res.status(500).json({ error: 'Error fetching shot data' });
+    }
+});
+
+
 module.exports = router;

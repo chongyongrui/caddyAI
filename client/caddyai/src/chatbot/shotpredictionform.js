@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import './ShotFeedbackForm.css';
+const { oneHotEncode } = require('../KNNClassifier/Encoder.js'); 
+//const { classifyShot } = require('../KNNClassifier/classify'); 
 
 const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const [selectedSurface, setSelectedSurface] = useState(null);
@@ -14,14 +16,13 @@ const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const windRef = useRef(null);
   const lieRef = useRef(null);
 
-  const [feedbackOption, setFeedbackOption] = useState('Yes'); // For feedback-specific option
+  const [feedbackOption, setFeedbackOption] = useState('Yes'); 
 
   const surface = ['Fairway', 'Rough', 'Thick Rough', 'Sand', 'Dirt'];
   const slope = ['Uphill', 'Downhill', 'Flat'];
   const wind = ['→', '←', '↑', '↓', 'negligible'];
   const lie = ['flat', 'slope right', 'slope left', 'slope back', 'slope forward'];
 
-  // Scroll into view when an option is selected
   const scrollToSelected = (index, ref) => {
     if (ref.current) {
       const selectedElement = ref.current.children[index];
@@ -53,28 +54,35 @@ const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
     if (selectedLie !== null) scrollToSelected(selectedLie, lieRef);
   }, [selectedLie]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const selectedChoices = {
-      distance: selectedDistance, // Use the selectedDistance directly
+      distance: selectedDistance,
       surface: surface[selectedSurface],
       slope: slope[selectedSlope],
       wind: wind[selectedWind],
       lie: lie[selectedLie],
     };
 
-    if (isFeedback) {
-      selectedChoices.feedbackOption = feedbackOption;
-      // Submit to the feedback DB table
-      console.log("Submitting feedback data", selectedChoices);
-      // You would send this data to your feedback DB table here
-    } else {
-      // Submit to the regular DB table
-      console.log("Submitting shot prediction data", selectedChoices);
-      // You would send this data to your prediction DB table here
-    }
+   
+    //const encodedData = oneHotEncode(selectedChoices);
+   // const classificationResult = await classifyShot(encodedData);
 
-    onSubmit(selectedChoices);
+
+    const finalData = {
+      ...selectedChoices,
+   //   encodedData,
+    //  classificationResult,
+    };
+
+    if (isFeedback) {
+      finalData.feedbackOption = feedbackOption;
+      console.log("Submitting feedback data", finalData);
+    } else {
+      console.log("Submitting shot prediction data", finalData);
+    }
+    onSubmit(finalData);
     onClose();
   };
 

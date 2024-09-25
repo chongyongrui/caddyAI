@@ -13,8 +13,6 @@ const ListOfGames = ({ games, userEmail }) => {
         setEmail(userEmail);
     },);
 
-
-    // Ensure games is an array
     if (!Array.isArray(games)) {
         console.error('Expected games to be an array but received:', games);
         return null; // Return null or a fallback UI if games is not an array
@@ -22,12 +20,11 @@ const ListOfGames = ({ games, userEmail }) => {
 
     return (
         <div>
-            <p>User Email: {userEmail}</p>
             {games.map((game, index) => (
                 <div key={index}>
                     <h4>{game.course} on {new Date(game.datetime).toLocaleDateString()}</h4>
                     <p>Total: {game.total_score}</p>
-                    <p> Score: {game.scores}</p>
+
                     <GameCard game={game}></GameCard>
                 </div>
             ))}

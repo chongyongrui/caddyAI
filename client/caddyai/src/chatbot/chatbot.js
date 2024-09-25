@@ -3,13 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 import './Chatbot.css'; // Import the CSS file
 import ReactMarkdown from 'react-markdown';
 import ShotPredictionForm from './ShotPredictionForm.js';
-import { GOLF_SP, CADDY_FORM } from './Prompts.js';
+import { GOLF_SP, CADDY_FORM, CHAT_SP, PAST_SHOT_SP } from './Prompts.js';
 import ChatMessage from './ChatMessage';
-import InputForm from './InputForm';
 import LoadingIcon from './LoadingIcon';
 import ShotFeedBackForm from './ShotFeedbackForm.js'; // Import the new form
 
-const Chatbot = ({ email }) => {
+const Chatbot = ({ email, encodedShotData }) => {
     const [inputValue, setInputValue] = useState("");
     const [loading, setLoading] = useState(false);
     const [conversationID, setConversationId] = useState(null);
@@ -121,7 +120,10 @@ const Chatbot = ({ email }) => {
 
     const handleCaddyFormSubmit = useCallback(async (data) => {
         setCaddyFormData(data);
-        const finalPrompt = parseCaddyShotData(data);
+        var finalPrompt = parseCaddyShotData(data);
+        const encodedShotDataString = JSON.stringify(encodedShotData);
+        console.log("encoded shot data is " + encodedShotDataString);
+        finalPrompt = finalPrompt + PAST_SHOT_SP + encodedShotDataString;
 
         const newMessage = { text: "What club to play for this shot?", type: 'sender' };
         const updatedHistory = [...messageHistory, newMessage];
@@ -175,7 +177,7 @@ const Chatbot = ({ email }) => {
     }, []);
 
 
-    const generateAIResponse = useCallback(async () => {
+    const generateAIResponse = useCallback(async (SP, text) => {
         try {
             const conversationHistory = messageHistory.map(msg => ({
                 role: msg.type === 'sender' ? 'user' : 'model',
@@ -189,7 +191,7 @@ const Chatbot = ({ email }) => {
                 }
             });
 
-            const result = await chat.sendMessageStream(inputValue);
+            const result = await chat.sendMessageStream(SP + text);
             let responseText = '';
 
             for await (const chunk of result.stream) {
@@ -211,7 +213,8 @@ const Chatbot = ({ email }) => {
 
         setLoading(true);
         try {
-            const aiResponse = await generateAIResponse();
+
+            const aiResponse = await generateAIResponse(CHAT_SP, inputValue);
 
             const aiMessage = { text: aiResponse, type: 'reply' };
             setMessageHistory((prevHistory) => [...prevHistory, aiMessage]);
@@ -241,9 +244,6 @@ const Chatbot = ({ email }) => {
                 {loading && <LoadingIcon />}
             </div>
 
-
-            <button className="open-form-button" onClick={handleShowForm}>Caddy Form</button>
-
             {showFeedbackForm && (
                 <ShotFeedBackForm
                     initialData={formData}
@@ -252,8 +252,8 @@ const Chatbot = ({ email }) => {
                     onSubmit={handleNewFormSubmit}
                 />
             )}
-
             {showForm && <ShotPredictionForm onClose={handleCloseForm} onSubmit={handleCaddyFormSubmit} />}
+
 
             <input
                 type='text'
@@ -268,6 +268,8 @@ const Chatbot = ({ email }) => {
                 </div>
             </div>
 
+            <button className="open-form-button" onClick={handleShowForm}>Caddy ⛳</button>
+
             <p className='info'>
                 CaddyGPT is your personal golf caddy to help you shoot lower scores!
             </p>
@@ -276,6 +278,7 @@ const Chatbot = ({ email }) => {
             </p>
         </div>
     );
+
 
 };
 

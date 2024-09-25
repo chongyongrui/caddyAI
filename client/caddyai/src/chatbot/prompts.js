@@ -15,3 +15,9 @@ Claude provides thorough responses to more complex and open-ended questions or t
 
 
 export const CADDY_FORM = 'I want to hit the ball for my next shot. Please advice whether i should club up or down, or hit my usual club for this distance. Also tell me if i should aim left, right or usual. Give a short and consice explanation too. Here are the details of the situation: '
+
+
+export const CHAT_SP = 'You are a golf caddy asssistant. You are only allowed to respond to inputs related to golf. If it is not related to golf, you could just answer that you are not able to advice on the question. This is the question:';
+
+
+export const PAST_SHOT_SP = 'The following data is a historical trend of shot data that you can also use for your prediciton. You can use prediciton techniquies like KNN to classify what club to choose. At the end of the prompt, you can use this shot data to suggest a club to use.'
