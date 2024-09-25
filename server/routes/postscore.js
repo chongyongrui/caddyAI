@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database'); // Use the promise-based connection pool
+const pool = require('../database'); 
 
-// Route to get all gamestats
 router.get('/', async (req, res) => {
     try {
         const [results] = await pool.query('SELECT * FROM gamestats');

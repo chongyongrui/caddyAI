@@ -47,9 +47,6 @@ const ScoreForm = ({ email }) => {
 
     }, []);
 
-    
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -84,13 +81,13 @@ const ScoreForm = ({ email }) => {
                 console.log(data);
                 setSuccess(true);
                 setError('');
-                setHoleScores([...holeScores, { hole: currentHole, score: putts }]); // Save the score
-                setPutts(2); // Reset putts for next hole
-                setCurrentHole(prevHole => prevHole < 18 ? prevHole + 1 : 1); // Wrap around hole number
+                setHoleScores([...holeScores, { hole: currentHole, score: putts }]); 
+                setPutts(2); 
+                setCurrentHole(prevHole => prevHole < 18 ? prevHole + 1 : 1); 
                 notifySuccessfulPost();
 
                 setTimeout(() => {
-                    setSuccess(false); // Reset success after a delay
+                    setSuccess(false); 
                 }, 2000);
             })
             .catch((error) => {
@@ -112,7 +109,7 @@ const ScoreForm = ({ email }) => {
         const newgameid = uuidv4();
         setGameID(newgameid);
         console.log("game id is:" + newgameid)
-        setFormState(2); // Move to State 2
+        setFormState(2); 
     };
 
     const handleEndGame = () => {
@@ -124,13 +121,13 @@ const ScoreForm = ({ email }) => {
     };
 
     const handleConfirmEndGame = () => {
-        setFormState(3); // Transition to State 3
+        setFormState(3); 
         setShowEndGameModal(false);
     };
 
     const handleReturnToState1 = () => {
-        setFormState(1); // Return to State 1
-        setHoleScores([]); // Clear hole scores
+        setFormState(1); 
+        setHoleScores([]); 
     };
 
     const notifySuccessfulPost = () => {
@@ -168,15 +165,15 @@ const ScoreForm = ({ email }) => {
     };
 
     const submitFinalScore = async () => {
-        const gameid = gameID// Get the game ID from state or local storage;
+        const gameid = gameID
         const formData = {
             gameid,
             datetime: new Date().toISOString().slice(0, 19).replace('T', ' '),
-            userid: -1, // User ID,
-            email: email, // User email,
-            total_score: golfScoreTotal, // Total score,
-            teebox: teeBox,// Teebox,
-            scores: golfScores, // Dictionary of scores in JSON format
+            userid: -1, 
+            email: email, 
+            total_score: golfScoreTotal, 
+            teebox: teeBox,
+            scores: golfScores, 
             course: selectedCourse
         };
 
@@ -222,7 +219,6 @@ const ScoreForm = ({ email }) => {
                         </Form.Group>
                     </Row>
 
-                    {/* Number of Holes */}
                     <Row>
 
                         <Form.Group controlId="teeBox" className="mb-3">
@@ -259,7 +255,6 @@ const ScoreForm = ({ email }) => {
                         </Form.Group>
                     </Row>
 
-                    {/* Number of Holes */}
                     <Row>
 
                         <Form.Group controlId="numberOfHoles" className="mb-3">
@@ -286,7 +281,6 @@ const ScoreForm = ({ email }) => {
                         </Form.Group>
                     </Row>
 
-                    {/* Starting Hole */}
                     <Form.Group controlId="startingHole" className="mb-3">
                         <Row>
                             <Form.Label>Starting Hole</Form.Label>
@@ -309,7 +303,6 @@ const ScoreForm = ({ email }) => {
 
                     </Form.Group>
 
-                    {/* Start Button */}
                     <Button
                         variant="primary"
                         onClick={handleStart}
@@ -325,8 +318,7 @@ const ScoreForm = ({ email }) => {
                     <Row>
 
                         <Col>
-                            {/* Hole Selection */}
-
+                         
                             <Form.Group controlId="golfHole" className="mb-4">
                                 <Form.Label>Current Hole</Form.Label>
                                 <div className="d-flex align-items-center">
@@ -346,7 +338,6 @@ const ScoreForm = ({ email }) => {
                                 </div>
                             </Form.Group>
 
-                            {/* Fairway Hit */}
                             <Row className="align-items-center mb-3">
 
                                 <Col xs="auto">
@@ -380,7 +371,6 @@ const ScoreForm = ({ email }) => {
                                 </Col>
                             </Row>
 
-                            {/* GIR */}
                             <Row className="align-items-center mb-3">
                                 <Col xs="auto">
                                     <Form.Group controlId="gir" className="mb-0">
@@ -416,9 +406,6 @@ const ScoreForm = ({ email }) => {
                         </Col>
                         <Col>
 
-
-
-                            {/* Putts */}
                             <Form.Group controlId="putts" className="mb-4">
                                 <Form.Label>Putts</Form.Label>
                                 <div className="d-flex align-items-center">
@@ -438,7 +425,6 @@ const ScoreForm = ({ email }) => {
                                 </div>
                             </Form.Group>
 
-                            {/* Hole Score */}
                             <Form.Group controlId="score" className="mb-4">
                                 <Form.Label>Score</Form.Label>
                                 <div className="d-flex align-items-center">
@@ -465,10 +451,8 @@ const ScoreForm = ({ email }) => {
 
                         </Col>
 
-                        {/* Error Message */}
                         {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
 
-                        {/* End Game Modal */}
                         <Modal show={showEndGameModal} onHide={handleCloseModal}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Exit</Modal.Title>

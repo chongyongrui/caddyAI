@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
-import './login.css';  // Import the CSS file
+import './Login.css';
 
 const Login = (props) => {
   const [email, setEmail] = useState('');
@@ -18,33 +18,33 @@ const Login = (props) => {
     setEmailError('');
     setPasswordError('');
     setLoginError('');
-  
+
     if (email === '') {
       setEmailError('Please enter your email');
       return;
     }
-  
+
     if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       setEmailError('Please enter a valid email');
       return;
     }
-  
+
     if (password === '') {
       setPasswordError('Please enter a password');
       return;
     }
-  
+
     if (password.length < 8) {
       setPasswordError('The password must be 8 characters or longer');
       return;
     }
-  
+
     try {
       const response = await axios.post('http://localhost:3001/auth/login', {
         email,
         password,
       });
-  
+
       localStorage.setItem('token', response.data.token);
       props.setLoggedIn(true);
       props.setEmail(email);
@@ -58,7 +58,7 @@ const Login = (props) => {
       }
     }
   };
-  
+
 
   const handleSignup = async () => {
     try {
@@ -77,11 +77,11 @@ const Login = (props) => {
 
   return (
 
-    
-    <div className="login-container">
-  <h1 className="login-title">CaddyAI</h1>
 
-  <div className="login-box">
+    <div className="login-container">
+      <h1 className="login-title">CaddyAI</h1>
+
+      <div className="login-box">
         <div className="titleContainer">
           <div>Login</div>
         </div>

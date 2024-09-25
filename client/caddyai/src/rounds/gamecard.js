@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import axios from 'axios';
-import './gamecard.css';
+import './GameCard.css';
 
 const GameCard = ({ game }) => {
     const [parValues, setParValues] = useState([]);

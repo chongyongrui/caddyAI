@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.38, for macos14 (arm64)
 --
 -- Host: localhost    Database: caddyai
 -- ------------------------------------------------------
--- Server version	8.0.39
+-- Server version	9.0.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -33,7 +33,7 @@ CREATE TABLE `gamestats` (
   `scores` text NOT NULL,
   `course` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `gamestats` (
 
 LOCK TABLES `gamestats` WRITE;
 /*!40000 ALTER TABLE `gamestats` DISABLE KEYS */;
-INSERT INTO `gamestats` VALUES (1,'033c62cc-8dc6-46f5-befe-db5a86017932','2024-08-24 14:52:36',-1,'test@test.com',99,'Black','{\"1\":5,\"2\":6,\"3\":5,\"4\":6,\"5\":8,\"6\":6,\"7\":5,\"8\":4,\"9\":2,\"10\":4,\"11\":5,\"12\":6,\"13\":7,\"14\":6,\"15\":6,\"16\":6,\"17\":6,\"18\":6}','Seletar Country Club'),(2,'bdb12f0b-ccae-4714-8f79-df74afb1207f','2024-08-26 15:36:15',-1,'yrchong2000@gmail.com',91,'Blue','{\"1\":6,\"2\":5,\"3\":6,\"4\":7,\"5\":4,\"6\":3,\"7\":6,\"8\":5,\"9\":4,\"10\":6,\"11\":3,\"12\":5,\"13\":4,\"14\":6,\"15\":4,\"16\":6,\"17\":6,\"18\":5}','Seletar Country Club');
+INSERT INTO `gamestats` VALUES (1,'033c62cc-8dc6-46f5-befe-db5a86017932','2024-08-24 14:52:36',-1,'test@test.com',99,'Black','{\"1\":5,\"2\":6,\"3\":5,\"4\":6,\"5\":8,\"6\":6,\"7\":5,\"8\":4,\"9\":2,\"10\":4,\"11\":5,\"12\":6,\"13\":7,\"14\":6,\"15\":6,\"16\":6,\"17\":6,\"18\":6}','Seletar Country Club'),(2,'9dfee4c2-9c61-463d-a11f-8dfcbc1e6803','2024-09-02 06:41:10',-1,'',72,'Red','{\"1\":4,\"2\":4,\"3\":4,\"4\":4,\"5\":4,\"6\":4,\"7\":4,\"8\":4,\"9\":4,\"10\":4,\"11\":4,\"12\":4,\"13\":4,\"14\":4,\"15\":4,\"16\":4,\"17\":4,\"18\":4}','Seletar Country Club'),(3,'363d3e99-f22d-47dd-8aac-1fbf16433243','2024-09-03 06:04:19',-1,'yrchong2000@gmail.com',72,'White','{\"1\":4,\"2\":4,\"3\":4,\"4\":4,\"5\":4,\"6\":4,\"7\":4,\"8\":4,\"9\":4,\"10\":4,\"11\":4,\"12\":4,\"13\":4,\"14\":4,\"15\":4,\"16\":4,\"17\":4,\"18\":4}','Seletar Country Club'),(4,'55766b7b-4d1a-4e39-a558-f823ed365bd4','2024-09-04 04:34:26',-1,'yrchong2000@gmail.com',90,'Gold','{\"1\":5,\"2\":5,\"3\":5,\"4\":5,\"5\":5,\"6\":5,\"7\":5,\"8\":5,\"9\":5,\"10\":5,\"11\":5,\"12\":5,\"13\":5,\"14\":5,\"15\":5,\"16\":5,\"17\":5,\"18\":5}','Seletar Country Club');
 /*!40000 ALTER TABLE `gamestats` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-24 21:02:55
+-- Dump completed on 2024-09-25 14:42:26

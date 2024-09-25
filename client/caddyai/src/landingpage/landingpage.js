@@ -3,9 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
 import FormComponent from '../stats/ScoreForm'; // Assume you import your form component
-import TopNavbar from '../utils/topnavbar'; // Import the new TopNavbar component
-import Chatbot from '../chatbot/chatbot';
-import "./landingpage.css";
+import TopNavbar from '../utils/TopNavBar'; // Import the new TopNavbar component
+import Chatbot from '../chatbot/Chatbot.js';
+import "./LandingPage.css";
 
 const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
     const [listOfPosts, setListOfPosts] = useState([]);
@@ -25,22 +25,22 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-        .then(response => {
-            setUserEmail(response.data.email);
-        })
-        .catch(error => {
-            console.error('Error fetching user email:', error);
-        });
+            .then(response => {
+                setUserEmail(response.data.email);
+            })
+            .catch(error => {
+                console.error('Error fetching user email:', error);
+            });
 
         // Fetch the list of posts (scores)
         axios.get('http://localhost:3001/postscore') // Adjusted endpoint to match the backend route
-        .then((response) => {
-            console.log(response.data);
-            setListOfPosts(response.data);
-        })
-        .catch((error) => {
-            console.error('Error fetching data:', error);
-        });
+            .then((response) => {
+                console.log(response.data);
+                setListOfPosts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
     }, [loggedIn, navigate]);
 
     return (

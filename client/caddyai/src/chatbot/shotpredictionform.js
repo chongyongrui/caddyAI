@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import './shotpredictionform.css';
+import './ShotFeedbackForm.css';
 
 const ShotPredictionForm = ({ onClose, onSubmit, isFeedback = false }) => {
   const [selectedSurface, setSelectedSurface] = useState(null);

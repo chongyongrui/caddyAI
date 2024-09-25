@@ -16,31 +16,35 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `posts`
+-- Table structure for table `shothistory`
 --
 
-DROP TABLE IF EXISTS `posts`;
+DROP TABLE IF EXISTS `shothistory`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `posts` (
+CREATE TABLE `shothistory` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `postText` varchar(255) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `datetimenow` datetime NOT NULL,
+  `distance` int NOT NULL,
+  `surface` varchar(255) DEFAULT NULL,
+  `slope` varchar(255) DEFAULT NULL,
+  `pinElevation` varchar(255) DEFAULT NULL,
+  `wind` varchar(255) DEFAULT NULL,
+  `lie` varchar(255) DEFAULT NULL,
+  `club` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `posts`
+-- Dumping data for table `shothistory`
 --
 
-LOCK TABLES `posts` WRITE;
-/*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (1,'random title','asdfasdfasdfasdfasdfasdfasdf','user;s name','2024-08-17 05:40:09','2024-08-17 05:40:09'),(2,'example 2 title','asdfasdfasdasdfasdffasdfasdfasdfasdf','user 1','2024-08-17 05:54:50','2024-08-17 05:54:50'),(3,'example 4 title','quick broqwn fox ','user2','2024-08-17 05:55:03','2024-08-17 05:55:03'),(4,'example 4 title','quick broqwn fox ju8mps over the lazy dog','user3','2024-08-17 05:55:11','2024-08-17 05:55:11'),(5,'examasdfasdf title','quick broqwn fox ju8mps over the lazy dog','user3','2024-08-17 05:55:15','2024-08-17 05:55:15');
-/*!40000 ALTER TABLE `posts` ENABLE KEYS */;
+LOCK TABLES `shothistory` WRITE;
+/*!40000 ALTER TABLE `shothistory` DISABLE KEYS */;
+INSERT INTO `shothistory` VALUES (1,'yrchong2000@gmail.com','2024-09-25 13:55:33',150,'Fairway','Flat','Neutral','negligible','flat','7 iron'),(2,'yrchong2000@gmail.com','2024-09-25 14:22:53',160,'Fairway','Flat','Neutral','negligible','flat','6 iron'),(3,'yrchong2000@gmail.com','2024-09-25 14:23:46',150,'Fairway','Flat','Neutral','negligible','flat','7 iron');
+/*!40000 ALTER TABLE `shothistory` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

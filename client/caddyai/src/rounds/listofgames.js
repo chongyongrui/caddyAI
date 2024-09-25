@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import axios from 'axios';
-import GameCard from './gamecard';
+import GameCard from './GameCard.js';
 
 
 const ListOfGames = ({ games, userEmail }) => {
 
     const [parValues, setParValues] = useState([])
     const [email, setEmail] = useState('')
-
 
     useEffect(() => {
         setEmail(userEmail);

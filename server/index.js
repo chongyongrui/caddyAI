@@ -7,19 +7,21 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-const postsRouter = require('./routes/postscore.js');
-const authRoutes = require('./routes/auth');
-const coursesRouter = require('./routes/courses');
-const statsRouter = require('./routes/stats'); 
-const roundsRouter = require('./routes/gamestats');
-const chatConversationRouter = require('./routes/chatresponses.js')
+const postsRouter = require('./routes/PostScore.js');
+const authRoutes = require('./routes/Auth');
+const coursesRouter = require('./routes/Courses');
+const statsRouter = require('./routes/Stats'); 
+const roundsRouter = require('./routes/GameStats');
+const chatConversationRouter = require('./routes/ChatResponses.js')
+const shotFeedbackRouter = require('./routes/ShotFeedback.js')
 
 app.use('/auth', authRoutes);
 app.use('/courses', coursesRouter);
 app.use('/postscore', postsRouter);
-app.use('/stats', statsRouter); // Use the stats router
+app.use('/stats', statsRouter); 
 app.use('/gamestats', roundsRouter); 
 app.use('/chatresponses', chatConversationRouter);
+app.use('/shotfeedback', shotFeedbackRouter);
 
 // Start server
 const PORT = 3001;
