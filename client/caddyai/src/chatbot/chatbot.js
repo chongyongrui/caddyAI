@@ -1,25 +1,23 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import './Chatbot.css'; // Import the CSS file
-import ReactMarkdown from 'react-markdown';
-import ShotPredictionForm from './ShotPredictionForm.js';
-import { GOLF_SP, CADDY_FORM, CHAT_SP, PAST_SHOT_SP } from './Prompts.js';
-import ChatMessage from './ChatMessage';
-import LoadingIcon from './LoadingIcon';
-import ShotFeedBackForm from './ShotFeedbackForm.js'; // Import the new form
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
+import "./Chatbot.css";
+import ShotPredictionForm from "./ShotPredictionForm.js";
+import { GOLF_SP, CADDY_FORM, CHAT_SP, PAST_SHOT_SP } from "./Prompts.js";
+import ChatMessage from "./ChatMessage";
+import LoadingIcon from "./LoadingIcon";
+import ShotFeedBackForm from "./ShotFeedbackForm.js";
 
 const Chatbot = ({ email, encodedShotData }) => {
-    const [inputValue, setInputValue] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [conversationID, setConversationId] = useState(null);
-    const [messageHistory, setMessageHistory] = useState([]);
-    const [showForm, setShowForm] = useState(false);
-    const [showShotForm, setShowShotForm] = useState(false);
-    const [formData, setFormData] = useState(null);
-    const [showFeedbackForm, setShowFeedbackForm] = useState(false);
-    const [caddyFormData, setCaddyFormData] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [conversationID, setConversationId] = useState(null);
+  const [messageHistory, setMessageHistory] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState(null);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [caddyFormData, setCaddyFormData] = useState(null);
 
-    const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
     //const MY_API_KEY = "AIzaSyAZdtwG56ao9TXP_xxjAD2c4IkHx6AhQOs";
     //const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -72,12 +70,13 @@ const Chatbot = ({ email, encodedShotData }) => {
         }
     }, [messageHistory]);
 
-    const parseCaddyShotData = useCallback((data) => {
-        let finalPrompt = GOLF_SP;
-        let distance = data.distance;
-        let surface = data.surface;
-        let slope = data.slope;
-        let wind = "";
+  const clubSelectionAI = useCallback(
+    async (prompt) => {
+      try {
+        const conversationHistory = messageHistory.map((msg) => ({
+          role: msg.type === "sender" ? "user" : "model",
+          parts: [{ text: msg.text }],
+        }));
 
         switch (data.wind) {
             case "→":
@@ -174,8 +173,8 @@ const Chatbot = ({ email, encodedShotData }) => {
             lie: message.formData?.lie,
         });
 
-        setShowFeedbackForm(true); // Trigger the form to open
-    }, [messageHistory]);
+        const result = await chat.sendMessageStream(prompt);
+        let responseText = "";
 
     const handleCloseNewForm = useCallback(() => {
         setShowFeedbackForm(false);
@@ -201,79 +200,255 @@ const Chatbot = ({ email, encodedShotData }) => {
     const handleSubmit = useCallback(async () => {
         if (inputValue.trim() === '') return;
 
-        const newMessage = { text: inputValue, type: 'sender' };
-        const updatedHistory = [...messageHistory, newMessage];
-        setMessageHistory(updatedHistory);
+  const saveConversationData = useCallback(
+    async (inputValue, response) => {
+      let convID = conversationID;
 
-        setLoading(true);
-        try {
+      if (convID == null) {
+        convID = uuidv4();
+        setConversationId(convID);
+      }
 
-            const aiResponse = await generateAIResponse(CHAT_SP, inputValue);
+      const formData = {
+        datetime: new Date().toISOString().slice(0, 19).replace("T", " "),
+        userid: -1,
+        userEmail: email,
+        conversationId: convID,
+        prompt: inputValue,
+        response: response,
+      };
 
-            const aiMessage = { text: aiResponse, type: 'reply' };
-            setMessageHistory((prevHistory) => [...prevHistory, aiMessage]);
+      try {
+        const res = await fetch("http://localhost:3001/chatresponses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
 
-            await saveConversationData(inputValue, aiResponse);
-        } catch (error) {
-            console.error('Error during submit process:', error);
-        } finally {
-            setLoading(false);
-            setInputValue('');
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
         }
-    }, [inputValue, messageHistory, generateAIResponse, saveConversationData]);
 
-    useEffect(() => {
-        const chatContainer = chatContainerRef.current;
-        if (chatContainer) {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        const data = await res.json();
+        console.log("Conversation saved:", data);
+      } catch (error) {
+        console.error("Error saving conversation details:", error);
+      }
+    },
+    [conversationID, email]
+  );
+
+  const parseCaddyShotData = useCallback((data) => {
+    let finalPrompt = GOLF_SP;
+    let distance = data.distance;
+    let surface = data.surface;
+    let slope = data.slope;
+    let wind = "";
+
+    switch (data.wind) {
+      case "→":
+        wind = "left to right";
+        break;
+      case "←":
+        wind = "right to left";
+        break;
+      case "↓":
+        wind = "headwind";
+        break;
+      case "↑":
+        wind = "tailwind";
+        break;
+      default:
+        wind = "negligible";
+    }
+
+    finalPrompt += `${CADDY_FORM} The distance to the hole is ${distance}. The ball is sitting in/on ${surface}. The slope of the course is ${slope}. The wind is ${wind}.`;
+
+    console.log("final prompt to send to API is: " + finalPrompt);
+    return finalPrompt;
+  }, []);
+
+  const handleCaddyFormSubmit = useCallback(
+    async (data) => {
+      setCaddyFormData(data);
+      var finalPrompt = parseCaddyShotData(data);
+      const encodedShotDataString = JSON.stringify(encodedShotData);
+      console.log("encoded shot data is " + encodedShotDataString);
+      finalPrompt = finalPrompt + PAST_SHOT_SP + encodedShotDataString;
+
+      const newMessage = {
+        text: "What club to play for this shot?",
+        type: "sender",
+      };
+      const updatedHistory = [...messageHistory, newMessage];
+      setMessageHistory(updatedHistory);
+
+      setLoading(true);
+      const aiResponse = await clubSelectionAI(finalPrompt);
+
+      const aiMessage = {
+        text: aiResponse,
+        type: "reply",
+        isShotPrediction: true,
+      };
+      setMessageHistory((prevHistory) => [...prevHistory, aiMessage]);
+      setLoading(false);
+
+      await saveConversationData(finalPrompt, aiResponse);
+    },
+    [messageHistory, clubSelectionAI, parseCaddyShotData, saveConversationData]
+  );
+
+  const generateAIResponse = useCallback(
+    async (SP, text) => {
+      try {
+        const conversationHistory = messageHistory.map((msg) => ({
+          role: msg.type === "sender" ? "user" : "model",
+          parts: [{ text: msg.text }],
+        }));
+
+        const chat = model.startChat({
+          history: conversationHistory,
+          generationConfig: {
+            maxOutputTokens: 1000,
+          },
+        });
+
+        const result = await chat.sendMessageStream(SP + text);
+        let responseText = "";
+
+        for await (const chunk of result.stream) {
+          responseText += chunk.text();
         }
-    }, [messageHistory]);
+        return responseText;
+      } catch (error) {
+        console.error("Error generating AI response:", error);
+        return "Sorry, I couldn't process that. Please try again.";
+      }
+    },
+    [inputValue, messageHistory, model]
+  );
 
-    return (
-        <div className='bottom-section'>
-            <div ref={chatContainerRef} className="chat-container">
-                {messageHistory.map((msg, index) => (
-                    <ChatMessage key={index} msg={msg} index={index} handleOpenNewForm={handleOpenNewForm} />
-                ))}
-                {loading && <LoadingIcon />}
-            </div>
+  const handleInputChange = useCallback((event) => {
+    setInputValue(event.target.value);
+  }, []);
 
-            {showFeedbackForm && (
-                <ShotFeedBackForm
-                    initialData={formData}
-                    userEmail={email}
-                    onClose={handleCloseNewForm}
-                    onSubmit={handleNewFormSubmit}
-                />
-            )}
-            {showForm && <ShotPredictionForm onClose={handleCloseForm} onSubmit={handleCaddyFormSubmit} />}
+  const handleOpenNewForm = useCallback(
+    (messageIndex) => {
+      const message = messageHistory[messageIndex];
 
+      setFormData({
+        distance: message.formData?.distance,
+        surface: message.formData?.surface,
+        slope: message.formData?.slope,
+        wind: message.formData?.wind,
+        lie: message.formData?.lie,
+      });
 
-            <input
-                type='text'
-                value={inputValue}
-                onChange={handleInputChange}
-                placeholder='Type your message...'
-            />
+      setShowFeedbackForm(true);
+    },
+    [messageHistory]
+  );
 
-            <div className='input-container'>
-                <div id='submit' onClick={handleSubmit}>
-                    Go ⏎
-                </div>
-            </div>
+  const handleCloseNewForm = useCallback(() => {
+    setShowFeedbackForm(false);
+  }, []);
 
-            <button className="open-form-button" onClick={handleShowForm}>Caddy ⛳</button>
+  const handleNewFormSubmit = useCallback((updatedData) => {
+    console.log("Updated data from NewForm:", updatedData);
+    setShowFeedbackForm(false);
+  }, []);
 
-            <p className='info'>
-                CaddyGPT is your personal golf caddy to help you shoot lower scores!
-            </p>
-            <p className='info'>
-                {email}
-            </p>
+  const handleShowForm = () => {
+    setShowForm(true);
+  };
+
+  const handleCloseForm = useCallback(() => {
+    setShowForm(false);
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    if (inputValue.trim() === "") return;
+
+    const newMessage = { text: inputValue, type: "sender" };
+    const updatedHistory = [...messageHistory, newMessage];
+    setMessageHistory(updatedHistory);
+
+    setLoading(true);
+    try {
+      const aiResponse = await generateAIResponse(CHAT_SP, inputValue);
+
+      const aiMessage = { text: aiResponse, type: "reply" };
+      setMessageHistory((prevHistory) => [...prevHistory, aiMessage]);
+
+      await saveConversationData(inputValue, aiResponse);
+    } catch (error) {
+      console.error("Error during submit process:", error);
+    } finally {
+      setLoading(false);
+      setInputValue("");
+    }
+  }, [inputValue, messageHistory, generateAIResponse, saveConversationData]);
+
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }, [messageHistory]);
+
+  return (
+    <div className="bottom-section">
+      <div ref={chatContainerRef} className="chat-container">
+        {messageHistory.map((msg, index) => (
+          <ChatMessage
+            key={index}
+            msg={msg}
+            index={index}
+            handleOpenNewForm={handleOpenNewForm}
+          />
+        ))}
+        {loading && <LoadingIcon />}
+      </div>
+
+      {showFeedbackForm && (
+        <ShotFeedBackForm
+          initialData={formData}
+          userEmail={email}
+          onClose={handleCloseNewForm}
+          onSubmit={handleNewFormSubmit}
+        />
+      )}
+      {showForm && (
+        <ShotPredictionForm
+          onClose={handleCloseForm}
+          onSubmit={handleCaddyFormSubmit}
+        />
+      )}
+
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Type your message..."
+      />
+
+      <div className="input-container">
+        <div id="submit" onClick={handleSubmit}>
+          Go ⏎
         </div>
-    );
+      </div>
 
+      <button className="open-form-button" onClick={handleShowForm}>
+        Caddy ⛳
+      </button>
 
+      <p className="info">
+        CaddyGPT is your personal golf caddy to help you shoot lower scores!
+      </p>
+      <p className="info">{email}</p>
+    </div>
+  );
 };
 
 export default Chatbot;
