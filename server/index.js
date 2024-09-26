@@ -14,6 +14,7 @@ const statsRouter = require('./routes/Stats');
 const roundsRouter = require('./routes/GameStats');
 const chatConversationRouter = require('./routes/ChatResponses.js')
 const shotFeedbackRouter = require('./routes/ShotFeedback.js')
+const chatApiRouter = require('./routes/chatapi'); 
 
 app.use('/auth', authRoutes);
 app.use('/courses', coursesRouter);
@@ -22,6 +23,7 @@ app.use('/stats', statsRouter);
 app.use('/gamestats', roundsRouter); 
 app.use('/chatresponses', chatConversationRouter);
 app.use('/shotfeedback', shotFeedbackRouter);
+app.use('/api', chatApiRouter);
 
 // Start server
 const PORT = 3001;

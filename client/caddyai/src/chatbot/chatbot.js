@@ -21,10 +21,56 @@ const Chatbot = ({ email, encodedShotData }) => {
 
     const chatContainerRef = useRef(null);
 
-    const MY_API_KEY = "AIzaSyAZdtwG56ao9TXP_xxjAD2c4IkHx6AhQOs";
-    const { GoogleGenerativeAI } = require("@google/generative-ai");
-    const genAI = new GoogleGenerativeAI(MY_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    //const MY_API_KEY = "AIzaSyAZdtwG56ao9TXP_xxjAD2c4IkHx6AhQOs";
+    //const { GoogleGenerativeAI } = require("@google/generative-ai");
+    //const genAI = new GoogleGenerativeAI(MY_API_KEY);
+    //const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const generateAIResponse = useCallback(async (SP, text) => {
+        try {
+            const response = await fetch('http://localhost:3001/api/generate-response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messageHistory,
+                    prompt: SP + text
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            return data.response;
+        } catch (error) {
+            console.error("Error generating AI response:", error);
+            return "Sorry, I couldn't process that. Please try again.";
+        }
+    }, [messageHistory]);
+    
+    const clubSelectionAI = useCallback(async (prompt) => {
+        try {
+            const response = await fetch('http://localhost:3001/api/generate-response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messageHistory,
+                    prompt
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            return data.response;
+        } catch (error) {
+            console.error("Error generating AI club selection response:", error);
+            return "Sorry, I couldn't process that. Please try again.";
+        }
+    }, [messageHistory]);
 
     const parseCaddyShotData = useCallback((data) => {
         let finalPrompt = GOLF_SP;
@@ -59,17 +105,16 @@ const Chatbot = ({ email, encodedShotData }) => {
     const saveConversationData = useCallback(async (inputValue, response) => {
         let convID = conversationID;
 
-        // Generate a new conversation ID if it’s null
         if (convID == null) {
             convID = uuidv4();
-            setConversationId(convID); // Set it in state
+            setConversationId(convID); 
         }
 
         const formData = {
             datetime: new Date().toISOString().slice(0, 19).replace('T', ' '),
             userid: -1,
             userEmail: email,
-            conversationId: convID, // Use the locally defined convID
+            conversationId: convID, 
             prompt: inputValue,
             response: response
         };
@@ -91,32 +136,6 @@ const Chatbot = ({ email, encodedShotData }) => {
             console.error('Error saving conversation details:', error);
         }
     }, [conversationID, email]);
-
-    const clubSelectionAI = useCallback(async (prompt) => {
-        try {
-            const conversationHistory = messageHistory.map(msg => ({
-                role: msg.type === 'sender' ? 'user' : 'model',
-                parts: [{ text: msg.text }]
-            }));
-
-            const chat = model.startChat({
-                history: conversationHistory,
-                generationConfig: { maxOutputTokens: 100 },
-            });
-
-            const result = await chat.sendMessageStream(prompt);
-            let responseText = '';
-
-            for await (const chunk of result.stream) {
-                responseText += chunk.text();
-            }
-
-            return responseText;
-        } catch (error) {
-            console.error("Error generating AI club selection response:", error);
-            return "Sorry, I couldn't process that. Please try again.";
-        }
-    }, [messageHistory, model]);
 
     const handleCaddyFormSubmit = useCallback(async (data) => {
         setCaddyFormData(data);
@@ -177,33 +196,8 @@ const Chatbot = ({ email, encodedShotData }) => {
     }, []);
 
 
-    const generateAIResponse = useCallback(async (SP, text) => {
-        try {
-            const conversationHistory = messageHistory.map(msg => ({
-                role: msg.type === 'sender' ? 'user' : 'model',
-                parts: [{ text: msg.text }]
-            }));
-
-            const chat = model.startChat({
-                history: conversationHistory,
-                generationConfig: {
-                    maxOutputTokens: 1000,
-                }
-            });
-
-            const result = await chat.sendMessageStream(SP + text);
-            let responseText = '';
-
-            for await (const chunk of result.stream) {
-                responseText += chunk.text();
-            }
-            return responseText;
-        } catch (error) {
-            console.error("Error generating AI response:", error);
-            return "Sorry, I couldn't process that. Please try again.";
-        }
-    }, [inputValue, messageHistory, model]);
-
+    
+    
     const handleSubmit = useCallback(async () => {
         if (inputValue.trim() === '') return;
 

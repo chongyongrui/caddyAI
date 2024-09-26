@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
-import FormComponent from '../stats/ScoreForm';
-import TopNavbar from '../utils/TopNavBar';
+import FormComponent from '../stats/ScoreForm.js';
+import TopNavbar from '../utils/TopNavBar.js';
 import Chatbot from '../chatbot/Chatbot.js';
 import "./LandingPage.css";
 
@@ -48,6 +48,7 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
                 console.error('Error fetching shot history data:', error);
             });
     }, [loggedIn, navigate, userEmail]);
+
     const encodedShotData = JSON.parse(localStorage.getItem('encodedShotData'));
 
     return (
