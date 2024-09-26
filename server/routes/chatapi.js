@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-//const MY_API_KEY = "AIzaSyAZdtwG56ao9TXP_xxjAD2c4IkHx6AhQOs";
 const MY_API_KEY = process.env.REACT_APP_MY_API_KEY;
 const genAI = new GoogleGenerativeAI(MY_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

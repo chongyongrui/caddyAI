@@ -294,17 +294,6 @@ const StatsPage = ({ email }) => {
           <br />
           <br />
           <br />
-          <Row>
-            {recentGame ? (
-              <div>
-                <h4>Most Recent Game - {courseName}</h4>
-                {renderScoreCard(recentGame, parValues)}
-                <br></br>
-              </div>
-            ) : (
-              <p>Loading recent game data...</p>
-            )}
-          </Row>
         </Container>
       </div>
     </div>

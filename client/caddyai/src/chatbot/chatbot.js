@@ -191,8 +191,6 @@ const Chatbot = ({ email, encodedShotData }) => {
     }, []);
 
 
-
-
     const handleSubmit = useCallback(async () => {
         if (inputValue.trim() === '') return;
 

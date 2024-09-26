@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../database");
 const authenticateToken = require("../authMiddleware");
 
-const JWT_SECRET = "your_jwt_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;

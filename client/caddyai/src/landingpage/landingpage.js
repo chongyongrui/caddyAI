@@ -25,7 +25,6 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
 
         setLoggedIn(true);
 
-        // Fetch user email only once
         if (!userEmail) {
             axios
                 .get("http://localhost:3001/auth/me", {
@@ -42,7 +41,6 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
                 });
         }
 
-        // Fetch shot history data only if it hasn't been fetched before
         if (userEmail && !hasFetchedData) {
             axios
                 .get("http://localhost:3001/shotfeedback/getlast1000", {
@@ -51,10 +49,9 @@ const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
                 .then((response) => {
                     const shotData = response.data;
                     console.log(shotData);
-                    // Save encoded shot data to local storage
                     localStorage.setItem("encodedShotData", JSON.stringify(shotData));
                     setListOfPosts(shotData);
-                    setHasFetchedData(true); // Mark data as fetched
+                    setHasFetchedData(true); 
                 })
                 .catch((error) => {
                     console.error("Error fetching shot history data:", error);

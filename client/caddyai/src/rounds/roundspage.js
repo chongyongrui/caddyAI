@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { Container, Row, Col, Dropdown } from "react-bootstrap";
 import TopNavbar from "../utils/TopNavBar.js";
@@ -79,10 +79,15 @@ const RoundsPage = ({ email }) => {
     setSelectedCourse(course);
   };
 
-  const filteredGames = gamesData.filter(
-    (game) => selectedCourse === "All" || game.course === selectedCourse
-  );
-  const courses = [...new Set(gamesData.map((game) => game.course))];
+  const filteredGames = useMemo(() => {
+    return gamesData.filter(
+      (game) => selectedCourse === "All" || game.course === selectedCourse
+    );
+  }, [gamesData, selectedCourse]);
+
+  const courses = useMemo(() => {
+    return [...new Set(gamesData.map((game) => game.course))];
+  }, [gamesData]);
 
   if (isLoading) {
     return <div>Loading...</div>;
