@@ -12,7 +12,7 @@ const RoundsPage = ({ email }) => {
   const navigate = useNavigate();
 
   const [gamesData, setGamesData] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All");
+  const [selectedCourse, setSelectedCourse] = useState("All"); s
   const [userEmail, setUserEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,7 +55,7 @@ const RoundsPage = ({ email }) => {
       navigate("/login");
       return;
     }
-    setUserEmail(localStorage.getItem("email")); 
+    setUserEmail(localStorage.getItem("email"));
 
     axios
       .get("http://localhost:3001/auth/me", {
