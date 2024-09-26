@@ -12,7 +12,7 @@ const RoundsPage = ({ email }) => {
   const navigate = useNavigate();
 
   const [gamesData, setGamesData] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("All"); s
+  const [selectedCourse, setSelectedCourse] = useState("All");
   const [userEmail, setUserEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 

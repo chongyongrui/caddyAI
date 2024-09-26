@@ -10,100 +10,107 @@ import "./LandingPage.css";
 const { oneHotEncode } = require("../KNNClassifier/Encoder.js");
 
 const LandingPage = ({ email, loggedIn, setLoggedIn }) => {
-  const [listOfPosts, setListOfPosts] = useState([]);
-  const [userEmail, setUserEmail] = useState("");
-  const navigate = useNavigate();
+    const [listOfPosts, setListOfPosts] = useState([]);
+    const [userEmail, setUserEmail] = useState(localStorage.getItem("email") || "");
+    const [hasFetchedData, setHasFetchedData] = useState(false); // Add flag to prevent refetching
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+    useEffect(() => {
+        const token = localStorage.getItem("token");
 
-    if (!token) {
-      // If no token, navigate to the login page
-      navigate("/login");
-      return;
-    }
+        if (!token) {
+            navigate("/login");
+            return;
+        }
 
-    setLoggedIn(true);
-    setUserEmail(localStorage.getItem("email"));
+        setLoggedIn(true);
 
-    axios
-      .get("http://localhost:3001/auth/me", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((response) => {
-        setUserEmail(response.data.email);
-      })
-      .catch((error) => {
-        console.error("Error fetching user email:", error);
-      });
+        // Fetch user email only once
+        if (!userEmail) {
+            axios
+                .get("http://localhost:3001/auth/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                .then((response) => {
+                    setUserEmail(response.data.email);
+                    localStorage.setItem("email", response.data.email);
+                })
+                .catch((error) => {
+                    console.error("Error fetching user email:", error);
+                });
+        }
 
-    axios
-      .get("http://localhost:3001/shotfeedback/getlast1000", {
-        params: { email: userEmail },
-      })
-      .then((response) => {
-        const shotData = response.data;
-        console.log(shotData);
-        // const encodedData = oneHotEncode(shotData);
-        localStorage.setItem("encodedShotData", JSON.stringify(shotData));
-        setListOfPosts(shotData);
-      })
-      .catch((error) => {
-        console.error("Error fetching shot history data:", error);
-      });
-  }, [loggedIn, navigate, userEmail]);
-  const encodedShotData = JSON.parse(localStorage.getItem("encodedShotData"));
+        // Fetch shot history data only if it hasn't been fetched before
+        if (userEmail && !hasFetchedData) {
+            axios
+                .get("http://localhost:3001/shotfeedback/getlast1000", {
+                    params: { email: userEmail },
+                })
+                .then((response) => {
+                    const shotData = response.data;
+                    console.log(shotData);
+                    // Save encoded shot data to local storage
+                    localStorage.setItem("encodedShotData", JSON.stringify(shotData));
+                    setListOfPosts(shotData);
+                    setHasFetchedData(true); // Mark data as fetched
+                })
+                .catch((error) => {
+                    console.error("Error fetching shot history data:", error);
+                });
+        }
+    }, [loggedIn, navigate, userEmail, hasFetchedData, setLoggedIn]);
 
-  return (
-    <div className="mainContainer">
-      <TopNavbar userEmail={userEmail} className="top-navbar-custom " />
-      <div className="content-body">
-        <Container fluid>
-          <section className="main">
-            <Tab.Container defaultActiveKey="caddy">
-              <div>
-                <h2>CaddyGPT</h2>
-                <Row>
-                  <Nav
-                    variant="tabs"
-                    className="ml-auto custom-tabs"
-                    style={{ width: "100%", justifyContent: "flex-end" }}
-                  >
-                    <Nav.Item style={{ color: "white" }}>
-                      <Nav.Link eventKey="caddy">Caddy</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="scorecard">Scorecard</Nav.Link>
-                    </Nav.Item>
-                  </Nav>
-                </Row>
-                <div></div> <div></div> <div></div>
-                <Row>
-                  <Tab.Content>
-                    <Tab.Pane eventKey="caddy">
-                      <Chatbot
-                        email={userEmail}
-                        encodedShotData={encodedShotData}
-                      />
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="scorecard">
-                      <Row className="bottom-section">
-                        <Col className="right-col">
-                          <FormComponent email={userEmail} />
-                        </Col>
-                      </Row>
-                    </Tab.Pane>
-                  </Tab.Content>
-                </Row>
-              </div>
-            </Tab.Container>
-          </section>
-        </Container>
-      </div>
-    </div>
-  );
+    const encodedShotData = JSON.parse(localStorage.getItem("encodedShotData"));
+
+    return (
+        <div className="mainContainer">
+            <TopNavbar userEmail={userEmail} className="top-navbar-custom " />
+            <div className="content-body">
+                <Container fluid>
+                    <section className="main">
+                        <Tab.Container defaultActiveKey="caddy">
+                            <div>
+                                <h2>CaddyGPT</h2>
+                                <Row>
+                                    <Nav
+                                        variant="tabs"
+                                        className="ml-auto custom-tabs"
+                                        style={{ width: "100%", justifyContent: "flex-end" }}
+                                    >
+                                        <Nav.Item style={{ color: "white" }}>
+                                            <Nav.Link eventKey="caddy">Caddy</Nav.Link>
+                                        </Nav.Item>
+                                        <Nav.Item>
+                                            <Nav.Link eventKey="scorecard">Scorecard</Nav.Link>
+                                        </Nav.Item>
+                                    </Nav>
+                                </Row>
+                                <Row>
+                                    <Tab.Content>
+                                        <Tab.Pane eventKey="caddy">
+                                            <Chatbot
+                                                email={userEmail}
+                                                encodedShotData={encodedShotData}
+                                            />
+                                        </Tab.Pane>
+                                        <Tab.Pane eventKey="scorecard">
+                                            <Row className="bottom-section">
+                                                <Col className="right-col">
+                                                    <FormComponent email={userEmail} />
+                                                </Col>
+                                            </Row>
+                                        </Tab.Pane>
+                                    </Tab.Content>
+                                </Row>
+                            </div>
+                        </Tab.Container>
+                    </section>
+                </Container>
+            </div>
+        </div>
+    );
 };
 
 export default LandingPage;
