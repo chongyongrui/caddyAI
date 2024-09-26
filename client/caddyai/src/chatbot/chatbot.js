@@ -21,11 +21,6 @@ const Chatbot = ({ email, encodedShotData }) => {
 
     const chatContainerRef = useRef(null);
 
-    //const MY_API_KEY = "AIzaSyAZdtwG56ao9TXP_xxjAD2c4IkHx6AhQOs";
-    //const { GoogleGenerativeAI } = require("@google/generative-ai");
-    //const genAI = new GoogleGenerativeAI(MY_API_KEY);
-    //const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const generateAIResponse = useCallback(async (SP, text) => {
         try {
             const response = await fetch('http://localhost:3001/api/generate-response', {
