@@ -16,10 +16,10 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedEmail = localStorage.getItem('email');
-    
+
     if (token) {
-      setLoggedIn(true); 
-      setEmail(storedEmail); 
+      setLoggedIn(true);
+      setEmail(storedEmail);
     }
   }, []);
 

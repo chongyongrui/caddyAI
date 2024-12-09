@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import './Chatbot.css'; // Import the CSS file
 import ReactMarkdown from 'react-markdown';
 import ShotPredictionForm from './ShotPredictionForm.js';
-import { GOLF_SP, CADDY_FORM, CHAT_SP, PAST_SHOT_SP } from './Prompts.js';
+import { GOLF_SP, CADDY_FORM, CHAT_SP, PAST_SHOT_SP } from '../server/routes/Prompts.js'
+
 import ChatMessage from './ChatMessage.js';
 import LoadingIcon from './LoadingIcon.js';
 import ShotFeedBackForm from './ShotFeedbackForm.js'; // Import the new form
